@@ -273,7 +273,7 @@ function buildPageUrl($pageNumber): string {
                                             <td class="font-bold text-muted">#<?php echo htmlspecialchars($inst['id']); ?></td>
                                             <td><?php echo formatDate($inst['date_intervention']); ?></td>
                                             <td>
-                                                <div class="font-bold"><?php echo htmlspecialchars(substr($inst['nom'], 0, 25)); ?></div>
+                                                <div class="font-bold"><?php echo htmlspecialchars(substr($inst['nom'] ?? '-', 0, 25)); ?></div>
                                                 <div class="text-xs text-muted"><?php echo htmlspecialchars($inst['numero_client']); ?></div>
                                             </td>
                                             <td>

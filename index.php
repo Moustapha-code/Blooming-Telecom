@@ -159,7 +159,7 @@ $statsByZone = $pdo->query("SELECT zone, COUNT(*) as count FROM installations GR
                                         <td class="font-bold text-muted">#<?php echo htmlspecialchars($ot['id']); ?></td>
                                         <td><?php echo formatDate($ot['date_intervention']); ?></td>
                                         <td>
-                                            <div class="font-bold"><?php echo htmlspecialchars(substr($ot['nom'], 0, 25)); ?></div>
+                                            <div class="font-bold"><?php echo htmlspecialchars(substr($ot['nom'] ?? '-', 0, 25)); ?></div>
                                             <div class="text-xs text-muted">ID: <?php echo htmlspecialchars($ot['numero_client']); ?></div>
                                         </td>
                                         <td>
