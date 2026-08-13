@@ -2,7 +2,6 @@
 bloowing_db.sql
 extension.pem
 extension.crx
-config/database.php
 pages/DRG.pdf
 exports/*
 !exports/.gitkeep

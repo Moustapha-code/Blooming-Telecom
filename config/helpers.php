@@ -3,6 +3,13 @@
  * Fonctions helper pour le tableau de bord
  */
 
+// Base URL de l'application. En local (XAMPP) l'app vit sous /blooming2 ;
+// en production, définir APP_BASE_URL="" pour servir à la racine du domaine.
+if (!defined('BASE_URL')) {
+    $envBase = getenv('APP_BASE_URL');
+    define('BASE_URL', rtrim($envBase === false ? '/blooming2' : $envBase, '/'));
+}
+
 // Nettoyer / sécuriser une entrée
 function sanitize($input) {
     return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');

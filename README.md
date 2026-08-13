@@ -38,20 +38,14 @@ mysql -u root -p bloowing_db < database/seed.sql
 
 ### 2. Configure Database Connection
 
-Copy the example config and update credentials:
+`config/database.php` reads credentials from environment variables, with
+defaults matching a stock local XAMPP install (localhost / root / no password),
+so no configuration is needed locally. In production, set:
 
-\`\`\`bash
-cp config/database.example.php config/database.php
 \`\`\`
-
-\`\`\`php
-$host = 'localhost';
-$db = 'bloowing_db';
-$user = 'root';
-$password = '';
+DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+APP_BASE_URL   (set to "" when the app is served at the domain root)
 \`\`\`
-
-`config/database.php` is gitignored, so your real credentials stay out of git.
 
 ### 3. Start PHP Server
 
@@ -247,13 +241,28 @@ Update credentials in `config/database.php` for production environments.
 
 ## Production Deployment
 
-1. **Use HTTPS**: Always use HTTPS in production
-2. **Update Database Credentials**: Change default credentials
-3. **Set Proper Permissions**: Restrict file permissions appropriately
-4. **Enable Error Logging**: Configure PHP error logging
-5. **Database Backups**: Set up regular backups
-6. **Rate Limiting**: Enable rate limiting at server level
-7. **Environment Variables**: Use environment variables for sensitive data
+### Deploy on Render (Docker)
+
+The repo ships with a `Dockerfile` and a `render.yaml` blueprint:
+
+1. Host a MySQL database (Render has no managed MySQL — use e.g. Aiven,
+   Railway, or any MySQL host) and import `database/schema.sql`
+   (+ optionally `database/seed.sql`).
+2. On [Render](https://render.com): **New → Blueprint**, select this repo.
+3. Set the `DB_*` environment variables to your MySQL credentials.
+4. Deploy. The app is served at the domain root (`APP_BASE_URL=""`).
+
+**Before exposing a deployment publicly:**
+
+1. **Change the admin password immediately** — the seed ships with the
+   publicly documented `admin` / `password` account
+2. **Never import real customer data** into a publicly reachable instance
+3. **Use HTTPS**: Render provides it by default
+4. **Database Backups**: Set up regular backups
+5. **Rate Limiting**: Enable rate limiting at server level
+
+Note: Render's filesystem is ephemeral — uploaded PDFs (`uploads/`) and
+generated exports (`exports/`) disappear on each redeploy.
 
 ## Troubleshooting
 

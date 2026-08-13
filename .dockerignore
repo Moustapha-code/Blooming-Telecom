@@ -1,0 +1,36 @@
+# Secrets & real data
+bloowing_db.sql
+extension.pem
+extension.crx
+pages/DRG.pdf
+exports/*
+!exports/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# Dependencies (composer install runs in the image)
+vendor/
+node_modules/
+
+# Unused Next.js scaffold & extension
+app/
+components/ui/
+components/theme-provider.tsx
+hooks/
+lib/
+styles/
+public/
+extension/
+admin-dashboard-builder.zip
+package.json
+pnpm-lock.yaml
+next.config.mjs
+postcss.config.mjs
+tsconfig.json
+components.json
+index_tailwind_demo.html
+
+# VCS / editor
+.git/
+.gitignore
+.vscode/

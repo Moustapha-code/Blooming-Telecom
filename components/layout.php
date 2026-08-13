@@ -18,85 +18,85 @@ function renderSidebar($currentPage) {
         <nav class="nav-menu">
             <ul class="nav-list">
                 <li class="nav-item">
-                    <a href="/blooming2/index.php" class="nav-link <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/index.php" class="nav-link <?php echo $currentPage == 'index.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-chart-pie"></i>
                         <span>Tableau de Bord</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/installations.php" class="nav-link <?php echo $currentPage == 'installations.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/installations.php" class="nav-link <?php echo $currentPage == 'installations.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-plug-circle-check"></i>
                         <span>Installations (OT)</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/OT_export.php" class="nav-link <?php echo $currentPage == 'OT_export.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/OT_export.php" class="nav-link <?php echo $currentPage == 'OT_export.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-file-excel"></i>
                         <span>Export Excel OT</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/technicians.php" class="nav-link <?php echo $currentPage == 'technicians.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/technicians.php" class="nav-link <?php echo $currentPage == 'technicians.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-users-gear"></i>
                         <span>Techniciens</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/drivers.php" class="nav-link <?php echo $currentPage == 'drivers.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/drivers.php" class="nav-link <?php echo $currentPage == 'drivers.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-id-card"></i>
                         <span>Chauffeurs</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/attendance.php" class="nav-link <?php echo $currentPage == 'attendance.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/attendance.php" class="nav-link <?php echo $currentPage == 'attendance.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-clipboard-user"></i>
                         <span>Pointage</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/OT_analyse.php" class="nav-link <?php echo $currentPage == 'OT_analyse.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/OT_analyse.php" class="nav-link <?php echo $currentPage == 'OT_analyse.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-magnifying-glass-chart"></i>
                         <span>Analyse OT</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/monthly_analyse.php" class="nav-link <?php echo $currentPage == 'monthly_analyse.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/monthly_analyse.php" class="nav-link <?php echo $currentPage == 'monthly_analyse.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-calendar-days"></i>
                         <span>Analyse Mensuelle</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/OT_costing.php" class="nav-link <?php echo $currentPage == 'OT_costing.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/OT_costing.php" class="nav-link <?php echo $currentPage == 'OT_costing.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-file-invoice-dollar"></i>
                         <span>Coûts & Facturation</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/materials.php" class="nav-link <?php echo $currentPage == 'materials.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/materials.php" class="nav-link <?php echo $currentPage == 'materials.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-boxes-stacked"></i>
                         <span>Inventaire Stock</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/cars.php" class="nav-link <?php echo $currentPage == 'cars.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/cars.php" class="nav-link <?php echo $currentPage == 'cars.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-truck-fast"></i>
                         <span>Gestion Flotte</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/zones.php" class="nav-link <?php echo $currentPage == 'zones.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/zones.php" class="nav-link <?php echo $currentPage == 'zones.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-location-dot"></i>
                         <span>Zones</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/blooming2/pages/admin-users.php" class="nav-link <?php echo $currentPage == 'admin-users.php' ? 'active' : ''; ?>">
+                    <a href="<?php echo BASE_URL; ?>/pages/admin-users.php" class="nav-link <?php echo $currentPage == 'admin-users.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-user-shield"></i>
                         <span>Paramètres Admin</span>
                     </a>
                 </li>
                 <li class="nav-item" style="margin-top: auto; padding-top: 20px;">
-                    <a href="/blooming2/api/logout.php" class="nav-link" style="color: var(--danger);">
+                    <a href="<?php echo BASE_URL; ?>/api/logout.php" class="nav-link" style="color: var(--danger);">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <span>Déconnexion</span>
                     </a>

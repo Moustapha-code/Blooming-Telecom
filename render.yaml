@@ -1,0 +1,22 @@
+# Render Blueprint - deploys the dashboard as a Docker web service.
+# The MySQL database must be hosted externally (Render has no managed MySQL);
+# set the DB_* environment variables in the Render dashboard.
+services:
+  - type: web
+    name: blooming-ftth
+    runtime: docker
+    plan: free
+    healthCheckPath: /login.php
+    envVars:
+      - key: APP_BASE_URL
+        value: ""
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
