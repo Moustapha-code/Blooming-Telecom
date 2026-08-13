@@ -1,0 +1,23 @@
+{
+    "manifest_version": 3,
+    "name": "Blooming PDF Extractor",
+    "version": "1.0",
+    "description": "Automatically detects and extracts text from PDFs for Blooming Telecom dashboard.",
+    "permissions": [
+        "tabs",
+        "storage",
+        "webNavigation"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "48": "icon.png"
+    }
+}

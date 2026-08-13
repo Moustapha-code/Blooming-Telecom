@@ -1,0 +1,184 @@
+<!-- Tailwind CSS Version of the Redesigned Dashboard -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Tailwind Version</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-slate-200 hidden lg:flex flex-col fixed h-full z-50">
+            <div class="p-6 flex items-center gap-3">
+                <i class="fa-solid fa-satellite-dish text-blue-600 text-xl"></i>
+                <span class="text-xl font-bold tracking-tight">Blooming FTTH</span>
+            </div>
+            
+            <nav class="flex-1 px-4 mt-4 space-y-1">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg shadow-lg shadow-blue-200">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
+                    <i class="fa-solid fa-plug-circle-check w-5"></i>
+                    Installations
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
+                    <i class="fa-solid fa-users-gear w-5"></i>
+                    Technicians
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
+                    <i class="fa-solid fa-clipboard-user w-5"></i>
+                    Attendance
+                </a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-all">
+                    <i class="fa-solid fa-magnifying-glass-chart w-5"></i>
+                    Analyse OT
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-100">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all">
+                    <i class="fa-solid fa-right-from-bracket w-5"></i>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 flex flex-col">
+            <!-- Topbar -->
+            <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 flex items-center justify-between px-8">
+                <div class="relative w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" placeholder="Search data..." class="w-full bg-slate-100 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <button class="text-slate-400 hover:text-blue-600 relative">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    
+                    <div class="flex items-center gap-3 cursor-pointer group">
+                        <div class="w-9 h-9 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                            JD
+                        </div>
+                        <div class="hidden md:block">
+                            <p class="text-sm font-semibold leading-none">John Doe</p>
+                            <p class="text-xs text-slate-500 mt-1">Administrator</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="p-8 max-w-7xl mx-auto w-full space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Welcome Back, Admin!</h2>
+                    <p class="text-slate-500">Overview of Blooming Telecom operations.</p>
+                </div>
+
+                <!-- KPI Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 text-xl">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">+12%</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-500">Total Technicians</p>
+                        <h3 class="text-3xl font-bold mt-1">124</h3>
+                    </div>
+                    
+                    <!-- Repeat for other cards with different colors... -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 text-xl">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">+5%</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-500">Open Installations</p>
+                        <h3 class="text-3xl font-bold mt-1">42</h3>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center text-cyan-600 text-xl">
+                                <i class="fa-solid fa-box-open"></i>
+                            </div>
+                            <span class="text-xs font-bold text-red-600 bg-red-50 px-2 py-1 rounded-full">-2%</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-500">Low Stock</p>
+                        <h3 class="text-3xl font-bold mt-1">8</h3>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 text-xl">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">Active</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-500">Today Attendance</p>
+                        <h3 class="text-3xl font-bold mt-1">98</h3>
+                    </div>
+                </div>
+
+                <!-- Table Section -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                        <h3 class="font-bold text-lg">Recent Installations</h3>
+                        <button class="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                                <tr>
+                                    <th class="px-6 py-4">Order</th>
+                                    <th class="px-6 py-4">Client</th>
+                                    <th class="px-6 py-4">Technician</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="px-6 py-4 text-sm font-bold text-blue-600">#4582</td>
+                                    <td class="px-6 py-4 text-sm">Alice Johnson</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold">MK</div>
+                                            <span class="text-sm">Mike Kaiser</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Completed
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-ellipsis"></i></button>
+                                    </td>
+                                </tr>
+                                <!-- More rows... -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# --- Real data & secrets (never commit) ---
+bloowing_db.sql
+extension.pem
+extension.crx
+config/database.php
+pages/DRG.pdf
+exports/*
+!exports/.gitkeep
+uploads/*
+!uploads/.gitkeep
+
+# --- Dependencies ---
+/vendor/
+/node_modules/
+
+# --- Editor / OS ---
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- Misc ---
+admin-dashboard-builder.zip
+*.log
