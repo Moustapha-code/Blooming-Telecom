@@ -19,8 +19,7 @@ $techCount = $pdo->query("SELECT COUNT(*) FROM technicians")->fetchColumn();
 $totalOTs = $pdo->query("SELECT COUNT(*) FROM installations")->fetchColumn();
 
 // 3. Realized Today
-$today = date('Y-m-d');
-$realizedToday = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'realise' AND date_realise = '$today'")->fetchColumn();
+$realizedToday = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'realise' AND date_realise = CURDATE()")->fetchColumn();
 
 // 4. Pending / In Progress
 $pendingOTs = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'encoure'")->fetchColumn();
@@ -81,7 +80,6 @@ $statsByZone = $pdo->query("SELECT zone, COUNT(*) as count FROM installations GR
                             <div class="kpi-icon blue">
                                 <i class="fa-solid fa-users"></i>
                             </div>
-                            <span class="badge badge-success">+2 cette semaine</span>
                         </div>
                         <div class="kpi-label">Techniciens</div>
                         <div class="kpi-value"><?php echo $techCount; ?></div>

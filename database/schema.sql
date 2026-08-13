@@ -56,6 +56,7 @@ CREATE TABLE `driver` (
   `phone` varchar(20) DEFAULT NULL,
   `license_number` varchar(50) DEFAULT NULL,
   `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`driver_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -77,6 +78,22 @@ CREATE TABLE `car` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ---------------------------------------------------------------------
+-- Car maintenance history
+-- ---------------------------------------------------------------------
+CREATE TABLE `car_maintenance` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `car_id` int(10) UNSIGNED NOT NULL,
+  `date_maintenance` date NOT NULL,
+  `description` text DEFAULT NULL,
+  `cost` decimal(10,2) DEFAULT 0.00,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `car_id` (`car_id`),
+  CONSTRAINT `car_maintenance_ibfk_1` FOREIGN KEY (`car_id`) REFERENCES `car` (`car_id`)
+    ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------------------------------
 -- Installations / OT (work orders) - core table
 --   etat: 'encoure' (in progress), 'realise' (done),
 --         'retard' (late), 'negative' (failed)
@@ -90,6 +107,7 @@ CREATE TABLE `installations` (
   `port` int(11) DEFAULT NULL,
   `zone` varchar(100) NOT NULL,
   `Gepon` varchar(50) DEFAULT NULL,
+  `scan` varchar(255) DEFAULT NULL,
   `pdf_file` varchar(255) DEFAULT NULL,
   `etat` varchar(20) NOT NULL DEFAULT 'encoure',
   `date_realise` date DEFAULT NULL,
@@ -108,6 +126,7 @@ CREATE TABLE `installations` (
   `commentaire_due_tempt` text DEFAULT NULL,
   `cloturer_par` varchar(255) DEFAULT NULL,
   `date_de_cloture` date DEFAULT NULL,
+  `commentaire` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `technician_id` (`technician_id`),
   KEY `idx_date_intervention` (`date_intervention`),

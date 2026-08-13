@@ -10,7 +10,7 @@ require '../components/layout.php';
 
 requireLogin();
 
-$page = $_GET['page'] ?? 1;
+$page = max(1, (int) ($_GET['page'] ?? 1));
 $limit = 10;
 $offset = ($page - 1) * $limit;
 

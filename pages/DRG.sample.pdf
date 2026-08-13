@@ -1,0 +1,91 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+5 0 obj
+<< /Length 1264 >>
+stream
+BT
+/F1 10 Tf
+72 720 Td
+14 TL
+(OT  Derangement                          Distribution) Tj
+T*
+(=====================================================) Tj
+T*
+(Ligne : FGP 000123          No 12/25 0000000       OT recu le 01/01/26) Tj
+T*
+(Type de Ligne:....Mixte) Tj
+T*
+() Tj
+T*
+(Client :       99999999    CLIENT DEMO EXEMPLE) Tj
+T*
+(                           20000000) Tj
+T*
+(Contact : GSM 20000000) Tj
+T*
+() Tj
+T*
+(Contact derangement : 43000000) Tj
+T*
+() Tj
+T*
+(Utilisateur :              CLIENT DEMO EXEMPLE) Tj
+T*
+(                           20000000) Tj
+T*
+(Adresse d'installation: MN1Z99) Tj
+T*
+(                        00000/0 100M) Tj
+T*
+() Tj
+T*
+(                        NOUAKCHOTT) Tj
+T*
+() Tj
+T*
+(  ANCIENNE CONSTITUTION            NOUVELLE CONSTITUTION) Tj
+T*
+() Tj
+T*
+(   ONT DEMO000000000000             ONT DEMO000000000000) Tj
+T*
+(   DIS MN1Z9900000/1-1              DIS MN1Z9900000/1-1) Tj
+T*
+() Tj
+T*
+(Defaut constate : Probleme de connexion     depuis le 01/01/26) Tj
+T*
+(Derangement releve le  : ........ a .....) Tj
+T*
+(Localisation du defaut : ......................  Cause du defaut : .......) Tj
+T*
+(=====================================================) Tj
+T*
+(Date : ..........  Heure : ..........      Nom de l'agent : .............) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000309 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1624
+%%EOF

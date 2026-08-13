@@ -35,6 +35,11 @@ INSERT INTO `car` (`matricule`, `model`, `brand`, `driver_id`, `notes`) VALUES
 ('0000 AA 01', 'Kangoo', 'Renault', 1, NULL),
 ('0000 AA 02', 'Partner', 'Peugeot', 2, NULL);
 
+-- Car maintenance history
+INSERT INTO `car_maintenance` (`car_id`, `date_maintenance`, `description`, `cost`) VALUES
+(1, '2026-01-10', 'Vidange et filtres', 1500.00),
+(2, '2026-01-15', 'Pneus avant', 3200.00);
+
 -- Materials
 INSERT INTO `materials` (`name`, `description`, `unit`, `stock_quantity`) VALUES
 ('Cable Drop 50',  'Drop cable 50m',  'pieces', 60),
