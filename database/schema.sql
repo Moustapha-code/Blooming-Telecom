@@ -188,3 +188,34 @@ CREATE TABLE `technician_materials` (
   CONSTRAINT `fk_car` FOREIGN KEY (`car_id`) REFERENCES `car` (`car_id`)
     ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- ---------------------------------------------------------------------
+-- Triggers on installations
+-- ---------------------------------------------------------------------
+DELIMITER $$
+
+-- Default the status to 'encoure' when missing on insert
+CREATE TRIGGER `trg_installations_before_insert`
+BEFORE INSERT ON `installations` FOR EACH ROW
+BEGIN
+  IF NEW.etat IS NULL OR NEW.etat = '' THEN
+    SET NEW.etat = 'encoure';
+  END IF;
+END$$
+
+-- Stamp closure date/time when a work order leaves 'encoure'
+CREATE TRIGGER `trg_update_cloture_on_status_change`
+BEFORE UPDATE ON `installations` FOR EACH ROW
+BEGIN
+    IF OLD.etat = 'encoure' AND NEW.etat <> 'encoure' THEN
+        IF NEW.etat = 'retard' THEN
+            SET NEW.date_de_cloture = NEW.date_realise;
+            SET NEW.temp_de_cloture = NEW.temp_de_realise;
+        ELSE
+            SET NEW.date_de_cloture = CURDATE();
+            SET NEW.temp_de_cloture = CURTIME();
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
