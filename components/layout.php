@@ -113,20 +113,21 @@ function renderSidebar($currentPage) {
 function renderTopbar($username) {
     ?>
     <header class="topbar">
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="dashboardSearch" placeholder="Rechercher partout...">
-        </div>
-        
-        <div class="topbar-actions">
-            <button class="icon-btn">
-                <i class="fa-solid fa-bell"></i>
-                <span class="notification-badge"></span>
+        <div class="flex items-center gap-3" style="flex: 1; min-width: 0;">
+            <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" title="Menu" aria-label="Ouvrir le menu">
+                <i class="fa-solid fa-bars"></i>
             </button>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="dashboardSearch" placeholder="Filtrer le tableau affiché...">
+            </div>
+        </div>
+
+        <div class="topbar-actions">
             <button class="icon-btn" title="Mode Sombre/Clair" id="themeToggle">
                 <i class="fa-solid fa-moon"></i>
             </button>
-            
+
             <div class="user-profile">
                 <div class="avatar">
                     <?php echo strtoupper(substr($username, 0, 1)); ?>
@@ -135,7 +136,6 @@ function renderTopbar($username) {
                     <span class="name"><?php echo htmlspecialchars($username); ?></span>
                     <span class="role">Administrateur</span>
                 </div>
-                <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--text-muted);"></i>
             </div>
         </div>
     </header>
@@ -159,6 +159,21 @@ function renderLayoutScripts() {
             if (localStorage.getItem('sidebarCollapsed') === 'true') {
                 sidebar.classList.add('collapsed');
             }
+        }
+
+        // Mobile Menu (off-canvas sidebar)
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        if (mobileMenuBtn && sidebar) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.toggle('open');
+            });
+            document.addEventListener('click', (e) => {
+                if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            });
         }
 
         // Theme Toggle

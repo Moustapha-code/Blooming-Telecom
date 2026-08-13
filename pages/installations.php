@@ -315,7 +315,7 @@ function buildPageUrl($pageNumber): string {
                                             <td class="text-right">
                                                 <div class="flex justify-end gap-2">
                                                     <button class="icon-btn" style="color: var(--primary);" onclick='editInstall(<?php echo json_encode($inst); ?>)' title="Modifier">
-                                                        <i class="fa-solid fa-eye"></i>
+                                                        <i class="fa-solid fa-pen"></i>
                                                     </button>
                                                     <button class="icon-btn" style="color: var(--danger);" onclick="deleteInstall(<?php echo $inst['id']; ?>)" title="Supprimer">
                                                         <i class="fa-solid fa-trash-can"></i>

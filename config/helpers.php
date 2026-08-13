@@ -33,7 +33,7 @@ function inArray($value, $array) {
 // Obtenir la classe du badge de statut
 function getStatusBadgeClass($status) {
     $classes = [
-        'Realiser'  => 'badge-success',
+        'realise'  => 'badge-success',
         'encoure'  => 'badge-warning',
         'retard'   => 'badge-danger',
         'negative' => 'badge-secondary',
@@ -46,7 +46,7 @@ function getStatusBadgeClass($status) {
 // Obtenir le texte du badge de statut
 function getStatusBadgeText($status) {
     $texts = [
-        'realiser'  => 'Realiser',
+        'realise'  => 'Réalisé',
         'encoure'  => 'En cours',
         'retard'   => 'En retard',
         'negative' => 'Négatif',
