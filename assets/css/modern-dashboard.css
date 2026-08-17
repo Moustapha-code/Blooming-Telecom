@@ -703,6 +703,11 @@ tr:hover td {
     .lg\:grid-cols-4 { grid-template-columns: 1fr; }
     .search-container { width: 100%; max-width: none; }
     .page-header { flex-direction: column; align-items: flex-start; }
+    /* Button groups and toolbars wrap instead of forcing the page wider */
+    .page-header .flex,
+    .card-header,
+    .content-body .flex { flex-wrap: wrap; }
+    .content-body { padding: 16px; }
 }
 
 .bg-surface-2 { background: var(--bg-main); }
