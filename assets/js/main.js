@@ -19,7 +19,31 @@ async function apiCall(endpoint, method = "GET", data = null) {
 
     try {
         const response = await fetch(endpoint, options);
-        const result = await response.json();
+
+        // Session expirée : renvoyer l'utilisateur vers la page de
+        // connexion plutôt que de lui montrer une erreur d'analyse JSON.
+        if (response.status === 401) {
+            showAlert("Session expirée. Redirection vers la connexion...", "danger");
+            setTimeout(() => {
+                window.location.href = "../login.php";
+            }, 1500);
+            throw new Error("Session expirée");
+        }
+
+        // Une réponse non-JSON (page HTML de connexion, erreur serveur)
+        // ferait échouer response.json() avec un message illisible.
+        const body = await response.text();
+        let result;
+        try {
+            result = body ? JSON.parse(body) : {};
+        } catch (parseError) {
+            console.error("Réponse non-JSON:", body.slice(0, 500));
+            throw new Error(
+                response.ok
+                    ? "Réponse inattendue du serveur."
+                    : `Erreur serveur (${response.status}).`
+            );
+        }
 
         if (!response.ok) {
             throw new Error(result.error || "Échec de l'appel API");
