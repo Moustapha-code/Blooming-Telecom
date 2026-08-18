@@ -400,7 +400,7 @@ $chartData = [
                         <div>
                             <h3 class="section-title mb-1 text-danger">
                                 <i class="fa-solid fa-triangle-exclamation mr-2"></i>
-                                Analyse des Retards & Interventions DRG
+                                Analyse des Interventions DRG
                             </h3>
                             <p class="text-xs text-muted mb-0">Suivi des commentaires pour tous les retards et toutes les interventions DRG.</p>
                         </div>
@@ -444,7 +444,7 @@ $chartData = [
                         </div>
 
                         <div class="chart-container mb-6" style="height: 300px; border-color: rgba(239, 68, 68, 0.2);">
-                            <h3 class="section-title text-danger"><i class="fa-solid fa-chart-bar mr-2"></i>Graphique des Motifs (Retards &amp; DRG)</h3>
+                            <h3 class="section-title text-danger"><i class="fa-solid fa-chart-bar mr-2"></i>Graphique des Motifs</h3>
                             <canvas id="chartByMotif"></canvas>
                         </div>
 
@@ -491,7 +491,7 @@ $chartData = [
                             </table>
                         </div>
 
-                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-list mr-2"></i>Détail des Interventions (Retards ou DRG)</h4>
+                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-list mr-2"></i>Détail des Interventions</h4>
                         <div class="table-responsive">
                             <table>
                                 <thead>
