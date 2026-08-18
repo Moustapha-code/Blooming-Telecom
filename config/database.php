@@ -21,6 +21,33 @@ $options = [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ];
 
+// Managed databases (TiDB Serverless, Aiven...) refuse unencrypted
+// connections, and PDO does not negotiate TLS unless a CA bundle is set —
+// setting only MYSQL_ATTR_SSL_VERIFY_SERVER_CERT does NOT enable it.
+// TLS is used for every non-local host; DB_SSL=0 forces it off.
+$sslSetting = getenv('DB_SSL');
+$useSsl = $sslSetting === false || $sslSetting === ''
+    ? !in_array($host, ['localhost', '127.0.0.1', '::1'], true)
+    : !in_array(strtolower($sslSetting), ['0', 'false', 'off'], true);
+
+if ($useSsl) {
+    $caCandidates = array_filter([
+        getenv('DB_SSL_CA') ?: null,
+        '/etc/ssl/certs/ca-certificates.crt',   // Debian/Ubuntu (Docker image)
+        '/etc/pki/tls/certs/ca-bundle.crt',     // RHEL/Fedora
+        'C:/xampp/apache/bin/curl-ca-bundle.crt',
+    ]);
+    foreach ($caCandidates as $ca) {
+        if (@is_readable($ca)) {
+            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+            break;
+        }
+    }
+    if (!isset($options[PDO::MYSQL_ATTR_SSL_CA])) {
+        error_log('DB TLS requested but no CA bundle found; set DB_SSL_CA.');
+    }
+}
+
 try {
     $pdo = new PDO($dsn, $user, $password, $options);
 } catch (PDOException $e) {

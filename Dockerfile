@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         poppler-utils \
         tesseract-ocr \
         tesseract-ocr-fra \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_mysql
