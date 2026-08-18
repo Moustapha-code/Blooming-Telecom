@@ -38,6 +38,39 @@ function inArray($value, $array) {
 }
 
 /**
+ * Ramène un état d'OT à l'une des quatre valeurs canoniques :
+ * 'encoure', 'realise', 'retard', 'negative'.
+ *
+ * Les imports CSV reprenaient le libellé du fichier tel quel, ce qui a
+ * introduit plusieurs orthographes pour un même état ('en cours' à côté
+ * de 'encoure'). Toute écriture d'état doit passer par cette fonction.
+ */
+function normalizeEtat(?string $raw): string
+{
+    $v = strtolower(trim((string) $raw));
+    if ($v === '') {
+        return 'encoure';
+    }
+    // Retirer les accents pour accepter "réalisé", "négatif", etc.
+    $v = strtr($v, [
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'à' => 'a', 'â' => 'a', 'î' => 'i', 'ï' => 'i',
+        'ô' => 'o', 'û' => 'u', 'ù' => 'u', 'ç' => 'c',
+    ]);
+    $v = preg_replace('/[\s_-]+/', ' ', $v);
+
+    $map = [
+        'encoure' => 'encoure', 'en cours' => 'encoure', 'encours' => 'encoure',
+        'en cour' => 'encoure', 'cours' => 'encoure',
+        'realise' => 'realise', 'realiser' => 'realise', 'realisee' => 'realise',
+        'fait' => 'realise', 'termine' => 'realise',
+        'retard' => 'retard', 'en retard' => 'retard', 'late' => 'retard',
+        'negative' => 'negative', 'negatif' => 'negative', 'negative ot' => 'negative',
+    ];
+    return $map[$v] ?? $v;
+}
+
+/**
  * Valeur destinée à une colonne entière : '' devient NULL.
  *
  * MySQL/MariaDB en mode permissif convertit '' en 0 sans rien dire, mais

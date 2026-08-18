@@ -15,7 +15,7 @@ try {
     $before->execute([$id]);
     $current = $before->fetch();
 
-    $newEtat = $data['etat'] ?: 'encoure';
+    $newEtat = normalizeEtat($data['etat'] ?? null);
     $cloture = $current
         ? computeClotureStamp($current['etat'], $newEtat, $current['date_realise'], $current['temp_de_realise'])
         : null;

@@ -22,7 +22,7 @@ try {
         $data['zone'] ?: '',
         $data['Gepon'] ?: '',
         $data['scan'] ?: NULL,
-        $data['etat'] ?: 'encoure',
+        normalizeEtat($data['etat'] ?? null),
         $data['nature_ot'] ?: '',
         intOrNull($data['technician_id'] ?? null),
         $data['commentaire'] ?? NULL

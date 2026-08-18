@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 
                                 $dateSql = parseDateToSql($rawDate);
                                 $timeSql = $rawTime;
-                                $etatSql = ($etatRaw !== '') ? strtolower($etatRaw) : 'encoure';
+                                $etatSql = normalizeEtat($etatRaw);
                                 $dateClotureSql = parseDateToSql($clotureRaw);
                                 $techIdSql = ($techIdRaw !== '') ? (int) $techIdRaw : null;
                                 $scanSql = ($scanRaw !== '') ? (strtolower($scanRaw) == 'scanne' || strtolower($scanRaw) == 'scanné' ? 'Scanné' : 'Non scanné') : null;
