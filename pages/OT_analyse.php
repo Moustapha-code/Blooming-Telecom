@@ -187,9 +187,20 @@ $stmt = $pdo->prepare($sqlRetards);
 $stmt->execute($params);
 $retardRows = $stmt->fetchAll();
 
-$countRetardsTotal = count(array_filter($retardRows, fn($r) => strtolower(trim($r['etat'])) === 'retard'));
-$countDRG = count(array_filter($retardRows, fn($r) => strtoupper(trim($r['nature_ot'])) === 'DRG'));
-$countCommented  = count(array_filter($retardRows, fn($r) => !empty(trim((string)$r['commentaire']))));
+$isRetard    = fn($r) => strtolower(trim((string) $r['etat'])) === 'retard';
+$isDRG       = fn($r) => strtoupper(trim((string) $r['nature_ot'])) === 'DRG';
+$hasComment  = fn($r) => trim((string) $r['commentaire']) !== '';
+
+$countRetardsTotal = count(array_filter($retardRows, $isRetard));
+$countDRG          = count(array_filter($retardRows, $isDRG));
+$countCommented    = count(array_filter($retardRows, $hasComment));
+
+// Le commentaire documente l'intervention, pas seulement le retard : la
+// grande majorité porte sur des DRG qui ne sont pas en retard. On compte
+// donc la couverture séparément pour chaque catégorie.
+$countDRGCommented    = count(array_filter($retardRows, fn($r) => $isDRG($r) && $hasComment($r)));
+$countRetardCommented = count(array_filter($retardRows, fn($r) => $isRetard($r) && $hasComment($r)));
+$pct = fn(int $part, int $whole) => $whole > 0 ? round($part * 100 / $whole) : 0;
 
 $motifsData = [];
 foreach ($retardRows as $r) {
@@ -418,19 +429,26 @@ $chartData = [
                             </div>
                             <div class="p-3 rounded-lg border bg-surface-2 flex items-center justify-between">
                                 <div>
-                                    <div class="text-xs text-muted font-bold">Retards Commentés</div>
+                                    <div class="text-xs text-muted font-bold">Interventions Commentées</div>
                                     <div class="text-xl font-extrabold text-primary"><?php echo $countCommented; ?> / <?php echo count($retardRows); ?></div>
+                                    <div class="text-xs text-muted mt-1">
+                                        DRG <span class="font-bold text-warning"><?php echo $countDRGCommented; ?>/<?php echo $countDRG; ?></span>
+                                        (<?php echo $pct($countDRGCommented, $countDRG); ?>%)
+                                        &middot;
+                                        Retards <span class="font-bold text-danger"><?php echo $countRetardCommented; ?>/<?php echo $countRetardsTotal; ?></span>
+                                        (<?php echo $pct($countRetardCommented, $countRetardsTotal); ?>%)
+                                    </div>
                                 </div>
                                 <i class="fa-solid fa-comment-dots text-primary text-2xl"></i>
                             </div>
                         </div>
 
                         <div class="chart-container mb-6" style="height: 300px; border-color: rgba(239, 68, 68, 0.2);">
-                            <h3 class="section-title text-danger"><i class="fa-solid fa-chart-bar mr-2"></i>Graphique des Motifs de Retard</h3>
+                            <h3 class="section-title text-danger"><i class="fa-solid fa-chart-bar mr-2"></i>Graphique des Motifs (Retards &amp; DRG)</h3>
                             <canvas id="chartByMotif"></canvas>
                         </div>
 
-                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-chart-pie mr-2"></i>Répartition par Motif de Retard</h4>
+                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-chart-pie mr-2"></i>Répartition par Motif (Commentaire)</h4>
                         <div class="table-responsive mb-8">
                             <table>
                                 <thead>
@@ -484,7 +502,7 @@ $chartData = [
                                         <th>Client</th>
                                         <th>Zone</th>
                                         <th>Technicien</th>
-                                        <th>Motif / Résultat du Retard (Commentaire)</th>
+                                        <th>Motif / Commentaire de l'intervention</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -497,7 +515,8 @@ $chartData = [
                                     <?php else: ?>
                                         <?php foreach ($retardRows as $r): ?>
                                             <tr class="table-row">
-                                                <td class="font-bold text-danger">#<?php echo htmlspecialchars($r['id']); ?></td>
+                                                <?php $rowRetard = $isRetard($r); ?>
+                                                <td class="font-bold <?php echo $rowRetard ? 'text-danger' : 'text-warning'; ?>">#<?php echo htmlspecialchars($r['id']); ?></td>
                                                 <td><?php echo htmlspecialchars($r['date_intervention']); ?></td>
                                                 <td><span class="badge badge-info"><?php echo htmlspecialchars($r['nature_ot']); ?></span></td>
                                                 <td class="font-medium"><?php echo htmlspecialchars($r['nom']); ?> <span class="text-xs text-muted">(<?php echo htmlspecialchars($r['numero_client']); ?>)</span></td>
@@ -505,7 +524,11 @@ $chartData = [
                                                 <td><?php echo htmlspecialchars($r['technician_name']); ?></td>
                                                 <td>
                                                     <?php if (!empty(trim((string)$r['commentaire']))): ?>
-                                                        <div class="p-2 rounded bg-danger-soft border border-danger/30 text-xs font-semibold text-danger">
+                                                        <?php // Un commentaire sur un DRG à l'heure n'est pas un motif de retard :
+                                                              // seuls les retards restent en rouge. ?>
+                                                        <div class="p-2 rounded text-xs font-semibold <?php echo $rowRetard
+                                                            ? 'bg-danger-soft border border-danger/30 text-danger'
+                                                            : 'bg-surface-2 border border-warning/30 text-warning'; ?>">
                                                             <i class="fa-solid fa-comment-dots mr-1"></i> <?php echo htmlspecialchars($r['commentaire']); ?>
                                                         </div>
                                                     <?php else: ?>
