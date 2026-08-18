@@ -82,12 +82,13 @@ function getStatusBadgeClass($status) {
     $classes = [
         'realise'  => 'badge-success',
         'encoure'  => 'badge-warning',
+        'en cours' => 'badge-warning',   // même état, orthographe présente en base
         'retard'   => 'badge-danger',
         'negative' => 'badge-secondary',
-        'Present'  => 'badge-success',
-        'Absent'   => 'badge-danger',
+        'present'  => 'badge-success',
+        'absent'   => 'badge-danger',
     ];
-    return $classes[$status] ?? 'badge-secondary';
+    return $classes[strtolower(trim((string) $status))] ?? 'badge-secondary';
 }
 
 // Obtenir le texte du badge de statut
@@ -95,11 +96,12 @@ function getStatusBadgeText($status) {
     $texts = [
         'realise'  => 'Réalisé',
         'encoure'  => 'En cours',
+        'en cours' => 'En cours',
         'retard'   => 'En retard',
         'negative' => 'Négatif',
-        'Present'  => 'Présent',
-        'Absent'   => 'Absent',
+        'present'  => 'Présent',
+        'absent'   => 'Absent',
     ];
-    return $texts[$status] ?? $status;
+    return $texts[strtolower(trim((string) $status))] ?? $status;
 }
 ?>

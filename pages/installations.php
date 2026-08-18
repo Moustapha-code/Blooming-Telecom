@@ -26,8 +26,13 @@ $search = trim($_GET['q'] ?? '');
 
 // Filtres avec alias de table i.
 if (!empty($_GET['etat'])) {
-    $where[]  = 'i.etat = ?';
-    $params[] = $_GET['etat'];
+    if ($_GET['etat'] === 'encoure') {
+        // Les deux orthographes du même état coexistent en base
+        $where[]  = "i.etat IN ('encoure', 'en cours')";
+    } else {
+        $where[]  = 'i.etat = ?';
+        $params[] = $_GET['etat'];
+    }
 }
 
 if (!empty($_GET['date_from'])) {

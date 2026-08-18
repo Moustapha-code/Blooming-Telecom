@@ -22,7 +22,8 @@ $totalOTs = $pdo->query("SELECT COUNT(*) FROM installations")->fetchColumn();
 $realizedToday = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'realise' AND date_realise = CURDATE()")->fetchColumn();
 
 // 4. Pending / In Progress
-$pendingOTs = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'encoure'")->fetchColumn();
+// Deux orthographes du même état coexistent en base ('encoure', 'en cours')
+$pendingOTs = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat IN ('encoure', 'en cours')")->fetchColumn();
 
 // 5. Stock Alerts
 $lowStock = $pdo->query("SELECT COUNT(*) FROM materials WHERE stock_quantity < 10")->fetchColumn();

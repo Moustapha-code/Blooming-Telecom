@@ -587,6 +587,32 @@ $chartData = [
         return { labels, values };
     }
 
+    // Couleurs par statut. Indispensable de mapper par valeur et non par
+    // position : la requête renvoie les états par ordre alphabétique, donc
+    // un tableau positionnel attribue les couleurs au hasard.
+    // 'en cours' et 'encoure' désignent le même état (deux orthographes
+    // présentes en base), d'où la même couleur.
+    const STATUS_COLORS = {
+        'realise':  'rgba(34, 197, 94, 0.9)',    // vert
+        'encoure':  'rgba(234, 179, 8, 0.9)',    // jaune
+        'en cours': 'rgba(234, 179, 8, 0.9)',    // jaune
+        'retard':   'rgba(239, 68, 68, 0.9)',    // rouge
+        'negative': 'rgba(148, 163, 184, 0.9)',  // gris
+    };
+    const STATUS_LABELS = {
+        'realise':  'Réalisé',
+        'encoure':  'En cours',
+        'en cours': 'En cours',
+        'retard':   'En retard',
+        'negative': 'Négatif',
+    };
+    function statusColor(etat) {
+        return STATUS_COLORS[String(etat).toLowerCase().trim()] || 'rgba(148, 163, 184, 0.9)';
+    }
+    function statusLabel(etat) {
+        return STATUS_LABELS[String(etat).toLowerCase().trim()] || etat;
+    }
+
     // 1) OT par jour
     (function () {
         const ctx = document.getElementById('chartByDate');
@@ -639,23 +665,10 @@ $chartData = [
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: labels,
+                labels: labels.map(statusLabel),
                 datasets: [{
                     data: values,
-                    backgroundColor: [
-
-                        'rgba(34,197,94,0.9)',         // realise (green)
-                        'rgba(239,68,68,0.9)',         // retard (red)
-                        'rgba(223, 247, 7, 0.8)',      // encoure (yellow)
-
-
-                        'rgba(209, 206, 197, 0.9)',    // negative
-
-
-
-
-
-                    ],
+                    backgroundColor: labels.map(statusColor),
                     borderWidth: 0
                 }]
             },
