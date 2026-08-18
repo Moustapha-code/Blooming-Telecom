@@ -17,14 +17,14 @@ try {
     $stmt->execute([
         $data['date_intervention'] ?: date('Y-m-d'),
         $data['nom'],
-        $data['numero_client'] ?: '',
-        $data['port'] ?: '',
+        intOrNull($data['numero_client'] ?? null),
+        intOrNull($data['port'] ?? null),
         $data['zone'] ?: '',
         $data['Gepon'] ?: '',
         $data['scan'] ?: NULL,
         $data['etat'] ?: 'encoure',
         $data['nature_ot'] ?: '',
-        $data['technician_id'] ?: NULL,
+        intOrNull($data['technician_id'] ?? null),
         $data['commentaire'] ?? NULL
     ]);
 

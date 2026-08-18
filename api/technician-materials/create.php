@@ -1,6 +1,7 @@
 <?php
 require '../../config/session.php';
 require '../../config/database.php';
+require '../../config/helpers.php';
 
 requireLogin();
 header('Content-Type: application/json');
@@ -14,8 +15,8 @@ try {
     ');
     
     $stmt->execute([
-        $data['technician_id'],
-        $data['material_id'],
+        intOrNull($data['technician_id'] ?? null),
+        intOrNull($data['material_id'] ?? null),
         $data['date_given'] ?: date('Y-m-d'),
         $data['quantity_given'] ?: 0,
         $data['quantity_returned'] ?: 0,

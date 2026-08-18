@@ -38,6 +38,22 @@ function inArray($value, $array) {
 }
 
 /**
+ * Valeur destinée à une colonne entière : '' devient NULL.
+ *
+ * MySQL/MariaDB en mode permissif convertit '' en 0 sans rien dire, mais
+ * les moteurs en mode strict (TiDB) refusent la requête entière. Les
+ * champs vides d'un formulaire arrivent toujours sous forme de chaîne
+ * vide, d'où ce filtre.
+ */
+function intOrNull($value): ?int
+{
+    if ($value === null || $value === '' || !is_numeric($value)) {
+        return null;
+    }
+    return (int) $value;
+}
+
+/**
  * Règle de clôture d'un OT : quand un OT quitte l'état 'encoure', on
  * horodate la clôture. Pour 'retard' on reprend la date/heure de
  * réalisation, sinon on prend la date/heure courante.

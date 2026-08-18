@@ -24,14 +24,14 @@ try {
     $params = [
         $data['date_intervention'] ?: date('Y-m-d'),
         $data['nom'],
-        $data['numero_client'] ?: '',
-        $data['port'] ?: '',
+        intOrNull($data['numero_client'] ?? null),
+        intOrNull($data['port'] ?? null),
         $data['zone'] ?: '',
         $data['Gepon'] ?: '',
         $data['scan'] ?: NULL,
         $newEtat,
         $data['nature_ot'] ?: '',
-        $data['technician_id'] ?: NULL,
+        intOrNull($data['technician_id'] ?? null),
         $data['commentaire_temp_de_realise'] ?: '',
         $data['commentaire'] ?? NULL,
     ];
