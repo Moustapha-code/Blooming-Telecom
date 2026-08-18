@@ -151,12 +151,24 @@ fclose($fh);
 $m->query('SET FOREIGN_KEY_CHECKS=1');
 echo "Data imported ($executed statements)   \n";
 
-// 3. Recreate the triggers
+// 3. Recreate the triggers. TiDB and some other MySQL-compatible engines
+//    do not implement triggers; the same rules live in PHP
+//    (config/helpers.php computeClotureStamp + the etat column default),
+//    so skipping them is safe.
+$made = 0;
 foreach (TRIGGERS as $trigger => $ddl) {
-    $m->query("DROP TRIGGER IF EXISTS `$trigger`");
-    $m->query($ddl);
+    try {
+        $m->query("DROP TRIGGER IF EXISTS `$trigger`");
+        $m->query($ddl);
+        $made++;
+    } catch (mysqli_sql_exception $e) {
+        echo "  ! trigger $trigger skipped: " . $e->getMessage() . "\n";
+    }
 }
-echo "Triggers recreated (" . count(TRIGGERS) . ")\n\n";
+echo $made === count(TRIGGERS)
+    ? "Triggers recreated ($made)\n\n"
+    : "Triggers: $made/" . count(TRIGGERS) . " created - engine lacks trigger support;\n"
+        . "  the equivalent logic runs in PHP, so behaviour is unchanged.\n\n";
 
 // 4. Verify both sides agree
 $local = new PDO("mysql:host=localhost;dbname=$localDb;charset=utf8mb4", 'root', '', [

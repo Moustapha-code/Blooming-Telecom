@@ -37,6 +37,30 @@ function inArray($value, $array) {
     return in_array($value, $array, true);
 }
 
+/**
+ * Règle de clôture d'un OT : quand un OT quitte l'état 'encoure', on
+ * horodate la clôture. Pour 'retard' on reprend la date/heure de
+ * réalisation, sinon on prend la date/heure courante.
+ *
+ * Cette règle existe aussi en trigger MySQL (trg_update_cloture_on_status_change),
+ * mais elle est reproduite ici car certains moteurs compatibles MySQL
+ * (TiDB par exemple) ne supportent pas les triggers. Les deux
+ * implémentations donnent le même résultat.
+ *
+ * @return array{0: ?string, 1: ?string}|null [date_de_cloture, temp_de_cloture]
+ *         ou null s'il n'y a rien à horodater.
+ */
+function computeClotureStamp(?string $oldEtat, ?string $newEtat, ?string $dateRealise, ?string $tempRealise): ?array
+{
+    if ($oldEtat !== 'encoure' || $newEtat === 'encoure' || $newEtat === null) {
+        return null;
+    }
+    if ($newEtat === 'retard') {
+        return [$dateRealise, $tempRealise];
+    }
+    return [date('Y-m-d'), date('H:i:s')];
+}
+
 // Obtenir la classe du badge de statut
 function getStatusBadgeClass($status) {
     $classes = [

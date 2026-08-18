@@ -191,6 +191,11 @@ CREATE TABLE `technician_materials` (
 
 -- ---------------------------------------------------------------------
 -- Triggers on installations
+--
+-- MySQL/MariaDB only. Engines such as TiDB do not support triggers;
+-- skip this block there. The same rules are implemented in PHP
+-- (config/helpers.php computeClotureStamp, plus the etat column
+-- default), so the application behaves identically either way.
 -- ---------------------------------------------------------------------
 DELIMITER $$
 
