@@ -448,7 +448,7 @@ $chartData = [
                             <canvas id="chartByMotif"></canvas>
                         </div>
 
-                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-chart-pie mr-2"></i>Répartition par Motif (Commentaire)</h4>
+                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-chart-pie mr-2"></i>Répartition par Motif DRG</h4>
                         <div class="table-responsive mb-8">
                             <table>
                                 <thead>
@@ -491,7 +491,7 @@ $chartData = [
                             </table>
                         </div>
 
-                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-list mr-2"></i>Détail des Interventions</h4>
+                        <h4 class="font-bold mb-3 mt-6 text-primary"><i class="fa-solid fa-list mr-2"></i>Détail des Interventions DRG</h4>
                         <div class="table-responsive">
                             <table>
                                 <thead>
@@ -806,7 +806,7 @@ $chartData = [
         });
     })();
 
-    // 6) Répartition par motif de retard (Horizontal Bar)
+    // 6) Répartition par motif DRG (Horizontal Bar)
     (function () {
         const ctx = document.getElementById('chartByMotif');
         if (!ctx) return;
@@ -816,9 +816,9 @@ $chartData = [
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Retards',
+                    label: 'DRG',
                     data: values,
-                    backgroundColor: 'rgba(239, 68, 68, 0.8)' // red for retard
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)'
                 }]
             },
             options: {
