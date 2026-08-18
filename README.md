@@ -252,6 +252,19 @@ The repo ships with a `Dockerfile` and a `render.yaml` blueprint:
 3. Set the `DB_*` environment variables to your MySQL credentials.
 4. Deploy. The app is served at the domain root (`APP_BASE_URL=""`).
 
+### Syncing local data to the deployed database
+
+`database/sync_to_remote.php` copies the ten application tables from the
+local database to a remote MySQL server and recreates the triggers, then
+verifies row counts on both sides. Credentials come from the environment:
+
+\`\`\`bash
+DB_HOST=your-host DB_PORT=3306 DB_USER=youruser DB_PASSWORD=yourpass DB_NAME=bloowing_db php database/sync_to_remote.php
+\`\`\`
+
+It replaces those tables on the target, so point it only at a database
+you intend to overwrite.
+
 **Before exposing a deployment publicly:**
 
 1. **Change the admin password immediately** — the seed ships with the
