@@ -15,7 +15,9 @@ header('Cache-Control: public, max-age=3600');
 $base = BASE_URL; // '' à la racine, '/blooming2' en local
 
 echo json_encode([
-    'name'             => 'Blooming FTTH',
+    // 'name' est le libellé complet (magasin, écran d'installation) ;
+    // 'short_name' est affiché sous l'icône, où le texte long est tronqué.
+    'name'             => 'Blooming Telecom',
     'short_name'       => 'Blooming',
     'description'      => "Gestion des ordres de travail, du pointage et du matériel FTTH.",
     'lang'             => 'fr',

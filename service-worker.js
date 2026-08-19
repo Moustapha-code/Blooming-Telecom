@@ -8,7 +8,9 @@
  * une page hors ligne de secours.
  */
 
-const VERSION     = 'v1';
+// À incrémenter dès qu'un fichier précaché change (icônes, CSS) : sinon
+// les installations existantes continuent de servir l'ancienne version.
+const VERSION     = 'v2';
 const STATIC_CACHE = `blooming-static-${VERSION}`;
 
 // Chemins résolus par rapport à l'emplacement du service worker, ce qui

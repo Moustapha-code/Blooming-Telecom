@@ -45,20 +45,43 @@ function roundedRect($img, int $x1, int $y1, int $x2, int $y2, int $r, int $colo
 roundedRect($img, 0, 0, CANVAS - 1, CANVAS - 1, 200, $dark);
 roundedRect($img, 8, 8, CANVAS - 9, CANVAS - 9, 194, $brand);
 
-// Glyphe « signal » : un point et trois arcs, évoquant la diffusion FTTH.
+// Marque « Blooming Telecom » : une fleur dont les pétales rayonnent
+// depuis le centre, lecture double — la floraison du nom, et l'émission
+// d'un signal télécom.
 $cx = (int) (CANVAS / 2);
-$cy = (int) (CANVAS * 0.68);
+$cy = (int) (CANVAS / 2);
 
-// Chaque bande est obtenue en soustrayant un secteur intérieur d'un
-// secteur extérieur : imagearc() avec une épaisseur laisse des trous.
-$arcStart = 200;
-$arcEnd   = 340;
-foreach ([[340, 398], [220, 278], [100, 158]] as [$inner, $outer]) {
-    imagefilledarc($img, $cx, $cy, $outer * 2, $outer * 2, $arcStart, $arcEnd, $white, IMG_ARC_PIE);
-    imagefilledarc($img, $cx, $cy, $inner * 2, $inner * 2, $arcStart, $arcEnd, $brand, IMG_ARC_PIE);
+// Un pétale = ellipse décalée du centre, tracée en polygone pour pouvoir
+// l'orienter librement (GD ne sait pas pivoter une ellipse).
+$petalHalfLength = 190; // rayon de l'ellipse dans l'axe du pétale
+$petalHalfWidth  = 82;  // rayon perpendiculaire
+$petalOffset     = 205; // éloignement du centre
+$petalCount      = 6;
+$steps           = 72;  // finesse du contour
+
+// Extension maximale : 205 + 190 = 395 px, sous les 410 px de la zone
+// sûre d'une icône « maskable » (80 % de 1024).
+for ($p = 0; $p < $petalCount; $p++) {
+    $theta = 2 * M_PI * $p / $petalCount - M_PI / 2; // premier pétale vers le haut
+    $cos = cos($theta);
+    $sin = sin($theta);
+
+    $points = [];
+    for ($s = 0; $s < $steps; $s++) {
+        $t = 2 * M_PI * $s / $steps;
+        // Ellipse locale, axe long orienté vers l'extérieur.
+        $lx = $petalHalfWidth * cos($t);
+        $ly = $petalHalfLength * sin($t) + $petalOffset;
+        // Rotation dans la direction du pétale.
+        $points[] = (int) round($cx + $lx * $sin + $ly * $cos);
+        $points[] = (int) round($cy - $lx * $cos + $ly * $sin);
+    }
+    imagefilledpolygon($img, $points, $white);
 }
 
-imagefilledellipse($img, $cx, $cy, 116, 116, $white);
+// Cœur de la fleur, en creux sur le fond pour détacher les pétales.
+imagefilledellipse($img, $cx, $cy, 232, 232, $brand);
+imagefilledellipse($img, $cx, $cy, 132, 132, $white);
 
 $outDir = __DIR__;
 foreach (SIZES as $size) {
