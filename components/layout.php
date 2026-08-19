@@ -207,14 +207,39 @@ function renderLayoutScripts() {
             }
         }
 
-        // Global Search
+        // Recherche de la barre supérieure.
+        //
+        // Le filtre au clavier ne masque que les lignes déjà rendues, soit
+        // une page de résultats. Quand la page expose un champ de recherche
+        // serveur (input[name="q"]), la touche Entrée relaie la saisie vers
+        // ce formulaire : la recherche porte alors sur toute la base et les
+        // autres filtres du formulaire sont conservés.
         const searchInput = document.getElementById('dashboardSearch');
         if (searchInput) {
-            searchInput.addEventListener('keyup', () => {
+            const serverInput = document.querySelector('input[name="q"]');
+            const serverForm  = serverInput ? serverInput.closest('form') : null;
+
+            if (serverForm) {
+                searchInput.placeholder = 'Rechercher dans toute la base (Entrée)...';
+                // Refléter la recherche serveur active.
+                if (serverInput.value && !searchInput.value) {
+                    searchInput.value = serverInput.value;
+                }
+            }
+
+            searchInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') return; // traité par keydown
                 const query = searchInput.value.toLowerCase();
                 document.querySelectorAll('.table-row').forEach(row => {
                     row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
                 });
+            });
+
+            searchInput.addEventListener('keydown', (event) => {
+                if (event.key !== 'Enter' || !serverForm) return;
+                event.preventDefault();
+                serverInput.value = searchInput.value.trim();
+                serverForm.submit(); // repart de la première page
             });
         }
     </script>
