@@ -271,6 +271,7 @@ $chartData = [
             margin-bottom: 24px;
         }
     </style>
+    <?php require_once __DIR__ . '/../components/pwa.php'; renderPwaHead(); ?>
 </head>
 
 <body>

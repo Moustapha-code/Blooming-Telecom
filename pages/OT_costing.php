@@ -131,6 +131,7 @@ $groupedData = $stmt->fetchAll();
             border-color: var(--primary);
         }
     </style>
+    <?php require_once __DIR__ . '/../components/pwa.php'; renderPwaHead(); ?>
 </head>
 <body>
     <div class="app-container">

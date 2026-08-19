@@ -138,6 +138,7 @@ if ($fileToParse) {
             border: 1px solid var(--border);
         }
     </style>
+    <?php require_once __DIR__ . '/../components/pwa.php'; renderPwaHead(); ?>
 </head>
 <body>
     <div class="app-container">

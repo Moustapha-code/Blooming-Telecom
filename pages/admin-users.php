@@ -30,6 +30,7 @@ $totalPages = ceil($totalUsers / $limit);
     <title>Utilisateurs Admin - Blooming FTTH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/modern-dashboard.css?v=<?php echo filemtime('../assets/css/modern-dashboard.css'); ?>">
+    <?php require_once __DIR__ . '/../components/pwa.php'; renderPwaHead(); ?>
 </head>
 <body>
     <div class="app-container">

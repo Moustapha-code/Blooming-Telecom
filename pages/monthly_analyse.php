@@ -357,6 +357,7 @@ $jsRankedData  = json_encode($rankedList);
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
     </style>
+    <?php require_once __DIR__ . '/../components/pwa.php'; renderPwaHead(); ?>
 </head>
 <body>
     <div class="app-container">

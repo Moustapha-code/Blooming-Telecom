@@ -224,6 +224,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 0.75rem;
         }
     </style>
+    <?php require_once __DIR__ . '/components/pwa.php'; renderPwaHead(); ?>
 </head>
 <body>
     <div class="login-bg-shapes">
