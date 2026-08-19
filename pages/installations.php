@@ -230,9 +230,23 @@ function buildPageUrl($pageNumber): string {
                     <div id="bulkActionBar" class="p-3 border-bottom flex items-center justify-between" style="display: none; background: var(--primary-soft); border-bottom: 1px solid var(--border); padding: 12px 20px;">
                         <div class="flex items-center gap-3">
                             <span class="badge badge-info" id="selectedCountBadge" style="font-size: 0.85rem; padding: 6px 12px;">0 sélectionné(s)</span>
-                            <span class="text-sm font-medium">Modifier le statut Scan des éléments sélectionnés :</span>
+                            <span class="text-sm font-medium">Actions groupées :</span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-1" style="border-right: 1px solid var(--border); padding-right: 10px; margin-right: 4px;">
+                                <i class="fa-solid fa-user-gear text-muted" title="Affecter un technicien"></i>
+                                <select id="bulkTechSelect" class="form-control form-control-sm" style="min-width: 170px; height: 32px; padding: 2px 8px;">
+                                    <option value="">— Non affecté —</option>
+                                    <?php foreach ($technicians as $tech): ?>
+                                        <option value="<?php echo $tech['technician_id']; ?>">
+                                            <?php echo htmlspecialchars($tech['name']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="bulkAssignTechnician()">
+                                    <i class="fa-solid fa-user-check"></i> Affecter
+                                </button>
+                            </div>
                             <button type="button" class="btn btn-sm btn-success" onclick="bulkUpdateScan('Scanné')">
                                 <i class="fa-solid fa-check"></i> Passer en "Scanné"
                             </button>
@@ -547,6 +561,36 @@ function buildPageUrl($pageNumber): string {
                     })
                     .catch(error => showAlert('Erreur: ' + error.message, 'danger'));
             }
+        }
+
+        function bulkAssignTechnician() {
+            const ids = Array.from(document.querySelectorAll('.select-inst:checked'))
+                             .map(cb => parseInt(cb.value, 10));
+
+            if (ids.length === 0) {
+                showAlert('Veuillez sélectionner au moins une installation.', 'warning');
+                return;
+            }
+
+            const select   = document.getElementById('bulkTechSelect');
+            const techId   = select.value;
+            const techName = techId ? select.options[select.selectedIndex].text.trim() : 'Non affecté';
+
+            const question = techId
+                ? `Affecter ${ids.length} OT au technicien "${techName}" ?`
+                : `Retirer l'affectation de ${ids.length} OT ?`;
+
+            if (!confirm(question)) return;
+
+            apiCall('../api/installations/bulk_assign_technician.php', 'POST', {
+                ids: ids,
+                technician_id: techId
+            })
+                .then(response => {
+                    showAlert(response.message || 'Affectation effectuée', 'success');
+                    setTimeout(() => location.reload(), 600);
+                })
+                .catch(error => showAlert('Erreur: ' + error.message, 'danger'));
         }
 
         function editInstall(inst) {
