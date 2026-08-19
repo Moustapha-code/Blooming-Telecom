@@ -17,6 +17,15 @@
  * WARNING: this REPLACES the listed tables on the remote server.
  */
 
+// Outil en ligne de commande uniquement. Servi par Apache, ce script
+// afficherait la cible de connexion (utilisateur et hôte de la base) à
+// n'importe quel visiteur, et pourrait déclencher un écrasement des
+// tables distantes. On répond 404 comme si le fichier n'existait pas.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
+}
+
 const TABLES = [
     'admin_users', 'technicians', 'zones', 'driver', 'car',
     'car_maintenance', 'installations', 'attendance',

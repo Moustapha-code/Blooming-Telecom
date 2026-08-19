@@ -9,6 +9,12 @@
  * donne des bords lisses sans dépendre de l'anticrénelage de GD.
  */
 
+// Outil en ligne de commande : rien ne justifie de le déclencher par HTTP.
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
+}
+
 const CANVAS = 1024;
 const BRAND  = [0x3b, 0x82, 0xf6]; // --primary du thème
 const SIZES  = [512, 192, 180, 32];

@@ -1,0 +1,4 @@
+# Aucun accès HTTP : dumps SQL et script de synchronisation.
+# (En production, docker/apache-security.conf fait la même chose : l'image
+# Debian ignore les .htaccess.)
+Require all denied
