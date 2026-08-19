@@ -266,9 +266,8 @@ function buildPageUrl($pageNumber): string {
                                     <th style="width: 40px; text-align: center;">
                                         <input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)" title="Tout sélectionner">
                                     </th>
-                                    <th>ID</th>
                                     <th>Date</th>
-                                    <th>Client</th>
+                                    <th>Heure de venir</th>
                                     <th>Zone</th>
                                     <th>Nature</th>
                                     <th>Statut</th>
@@ -281,7 +280,7 @@ function buildPageUrl($pageNumber): string {
                             <tbody>
                                 <?php if (empty($installations)): ?>
                                     <tr>
-                                        <td colspan="11" class="text-center p-8">Aucun OT trouvé pour ces critères.</td>
+                                        <td colspan="10" class="text-center p-8">Aucun OT trouvé pour ces critères.</td>
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($installations as $inst): ?>
@@ -289,11 +288,14 @@ function buildPageUrl($pageNumber): string {
                                             <td style="text-align: center;">
                                                 <input type="checkbox" class="select-inst" value="<?php echo $inst['id']; ?>" onchange="updateBulkActionState()">
                                             </td>
-                                            <td class="font-bold text-muted">#<?php echo htmlspecialchars($inst['id']); ?></td>
                                             <td><?php echo formatDate($inst['date_intervention']); ?></td>
                                             <td>
-                                                <div class="font-bold"><?php echo htmlspecialchars(substr($inst['nom'] ?? '-', 0, 25)); ?></div>
-                                                <div class="text-xs text-muted"><?php echo htmlspecialchars($inst['numero_client']); ?></div>
+                                                <?php if (!empty($inst['temp_de_venir'])): ?>
+                                                    <?php // Colonne TIME : on n'affiche pas les secondes. ?>
+                                                    <span class="font-medium"><?php echo htmlspecialchars(substr((string) $inst['temp_de_venir'], 0, 5)); ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-xs text-muted">-</span>
+                                                <?php endif; ?>
                                             </td>
                                             <td>
                                                 <span class="badge badge-secondary">
