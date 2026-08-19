@@ -23,9 +23,19 @@ async function apiCall(endpoint, method = "GET", data = null) {
         // Session expirée : renvoyer l'utilisateur vers la page de
         // connexion plutôt que de lui montrer une erreur d'analyse JSON.
         if (response.status === 401) {
+            // Le serveur renvoie l'URL absolue de connexion : un chemin
+            // relatif serait résolu depuis le dossier courant et donnerait
+            // /pages/login.php, qui n'existe pas.
+            let loginUrl = "/login.php";
+            try {
+                const payload = await response.clone().json();
+                if (payload && payload.login_url) loginUrl = payload.login_url;
+            } catch (ignored) {
+                /* réponse non-JSON : on garde l'URL par défaut */
+            }
             showAlert("Session expirée. Redirection vers la connexion...", "danger");
             setTimeout(() => {
-                window.location.href = "../login.php";
+                window.location.href = loginUrl;
             }, 1500);
             throw new Error("Session expirée");
         }

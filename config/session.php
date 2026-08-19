@@ -3,6 +3,8 @@
  * Session configuration and security
  */
 
+require_once __DIR__ . '/app.php'; // LOGIN_URL
+
 session_start();
 
 /**
@@ -29,9 +31,13 @@ function denyUnauthenticated(string $reason): void
     if (expectsJson()) {
         http_response_code(401);
         header('Content-Type: application/json');
-        echo json_encode(['error' => $reason, 'session_expired' => true]);
+        echo json_encode([
+            'error'           => $reason,
+            'session_expired' => true,
+            'login_url'       => LOGIN_URL,
+        ]);
     } else {
-        header('Location: login.php');
+        header('Location: ' . LOGIN_URL);
     }
     exit;
 }
