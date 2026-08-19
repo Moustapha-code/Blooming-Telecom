@@ -83,7 +83,7 @@ $stmt = $pdo->prepare('
     FROM installations i 
     LEFT JOIN technicians t ON i.technician_id = t.technician_id
     ' . $whereClause . '
-    ORDER BY i.date_intervention DESC
+    ORDER BY (i.etat IN (\'encoure\', \'en cours\')) DESC, i.date_intervention DESC
     LIMIT ' . $limit . ' OFFSET ' . $offset
 );
 $stmt->execute($params);
