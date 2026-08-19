@@ -220,27 +220,55 @@ function renderLayoutScripts() {
             const serverForm  = serverInput ? serverInput.closest('form') : null;
 
             if (serverForm) {
-                searchInput.placeholder = 'Rechercher dans toute la base (Entrée)...';
-                // Refléter la recherche serveur active.
+                // La page sait chercher en base : on ne masque PAS les lignes
+                // affichées. Le filtrage local ne voit qu'une page de
+                // résultats et affichait « aucun résultat » pour une fiche
+                // qui existe bel et bien, simplement sur une autre page.
+                searchInput.placeholder = 'Rechercher dans toute la base...';
                 if (serverInput.value && !searchInput.value) {
                     searchInput.value = serverInput.value;
                 }
-            }
 
-            searchInput.addEventListener('keyup', (event) => {
-                if (event.key === 'Enter') return; // traité par keydown
-                const query = searchInput.value.toLowerCase();
-                document.querySelectorAll('.table-row').forEach(row => {
-                    row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+                const runSearch = () => {
+                    const term = searchInput.value.trim();
+                    if (term === serverInput.value.trim()) return; // rien de neuf
+                    serverInput.value = term;
+                    serverForm.submit(); // repart de la première page
+                };
+
+                let timer = null;
+                searchInput.addEventListener('input', () => {
+                    clearTimeout(timer);
+                    const term = searchInput.value.trim();
+                    // Attendre une pause de frappe, et éviter de lancer une
+                    // recherche sur une saisie encore trop courte.
+                    if (term !== '' && term.length < 2) return;
+                    timer = setTimeout(runSearch, 700);
                 });
-            });
 
-            searchInput.addEventListener('keydown', (event) => {
-                if (event.key !== 'Enter' || !serverForm) return;
-                event.preventDefault();
-                serverInput.value = searchInput.value.trim();
-                serverForm.submit(); // repart de la première page
-            });
+                searchInput.addEventListener('keydown', (event) => {
+                    if (event.key !== 'Enter') return;
+                    event.preventDefault();
+                    clearTimeout(timer);
+                    runSearch();
+                });
+
+                // Après rechargement, reprendre la saisie là où elle était.
+                if (serverInput.value) {
+                    searchInput.focus();
+                    const end = searchInput.value.length;
+                    searchInput.setSelectionRange(end, end);
+                }
+            } else {
+                // Pas de recherche serveur ici : le filtrage local reste le
+                // seul moyen de réduire la liste affichée.
+                searchInput.addEventListener('keyup', () => {
+                    const query = searchInput.value.toLowerCase();
+                    document.querySelectorAll('.table-row').forEach(row => {
+                        row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+                    });
+                });
+            }
         }
     </script>
     <script src="<?php echo (strpos($_SERVER['SCRIPT_NAME'], '/pages/') !== false) ? '../' : ''; ?>assets/js/main.js"></script>
