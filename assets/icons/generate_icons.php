@@ -45,43 +45,49 @@ function roundedRect($img, int $x1, int $y1, int $x2, int $y2, int $r, int $colo
 roundedRect($img, 0, 0, CANVAS - 1, CANVAS - 1, 200, $dark);
 roundedRect($img, 8, 8, CANVAS - 9, CANVAS - 9, 194, $brand);
 
-// Marque « Blooming Telecom » : une fleur dont les pétales rayonnent
-// depuis le centre, lecture double — la floraison du nom, et l'émission
-// d'un signal télécom.
+// Marque « Blooming Telecom » : un B surmonté d'ondes wifi.
 $cx = (int) (CANVAS / 2);
-$cy = (int) (CANVAS / 2);
 
-// Un pétale = ellipse décalée du centre, tracée en polygone pour pouvoir
-// l'orienter librement (GD ne sait pas pivoter une ellipse).
-$petalHalfLength = 190; // rayon de l'ellipse dans l'axe du pétale
-$petalHalfWidth  = 82;  // rayon perpendiculaire
-$petalOffset     = 205; // éloignement du centre
-$petalCount      = 6;
-$steps           = 72;  // finesse du contour
-
-// Extension maximale : 205 + 190 = 395 px, sous les 410 px de la zone
-// sûre d'une icône « maskable » (80 % de 1024).
-for ($p = 0; $p < $petalCount; $p++) {
-    $theta = 2 * M_PI * $p / $petalCount - M_PI / 2; // premier pétale vers le haut
-    $cos = cos($theta);
-    $sin = sin($theta);
-
-    $points = [];
-    for ($s = 0; $s < $steps; $s++) {
-        $t = 2 * M_PI * $s / $steps;
-        // Ellipse locale, axe long orienté vers l'extérieur.
-        $lx = $petalHalfWidth * cos($t);
-        $ly = $petalHalfLength * sin($t) + $petalOffset;
-        // Rotation dans la direction du pétale.
-        $points[] = (int) round($cx + $lx * $sin + $ly * $cos);
-        $points[] = (int) round($cy - $lx * $cos + $ly * $sin);
-    }
-    imagefilledpolygon($img, $points, $white);
+// --- Ondes, au-dessus de la lettre ---
+// Chaque bande est la soustraction d'un secteur intérieur à un secteur
+// extérieur : imagearc() avec une épaisseur laisse des trous.
+// GD compte les angles dans le sens horaire depuis 3 h, donc 200°->340°
+// balaie le haut.
+// Bandes tracées de la plus grande à la plus petite : un secteur blanc
+// plus large recouvrirait sinon la bande déjà dessinée en dessous.
+$waveOriginY = 490;
+foreach ([[250, 292], [174, 216], [98, 140]] as [$inner, $outer]) {
+    imagefilledarc($img, $cx, $waveOriginY, $outer * 2, $outer * 2, 200, 340, $white, IMG_ARC_PIE);
+    imagefilledarc($img, $cx, $waveOriginY, $inner * 2, $inner * 2, 200, 340, $brand, IMG_ARC_PIE);
 }
 
-// Cœur de la fleur, en creux sur le fond pour détacher les pétales.
-imagefilledellipse($img, $cx, $cy, 232, 232, $brand);
-imagefilledellipse($img, $cx, $cy, 132, 132, $white);
+// --- Lettre B ---
+// Police prise sur le système : ce script ne tourne qu'à la demande, et
+// seuls les PNG produits sont versionnés.
+$fontCandidates = [
+    'C:/Windows/Fonts/arialbd.ttf',
+    'C:/Windows/Fonts/segoeuib.ttf',
+    '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+];
+$font = null;
+foreach ($fontCandidates as $candidate) {
+    if (is_readable($candidate)) {
+        $font = $candidate;
+        break;
+    }
+}
+if ($font === null) {
+    fwrite(STDERR, "Aucune police grasse trouvée. Ajoutez-en une à \$fontCandidates.\n");
+    exit(1);
+}
+
+$fontSize   = 430;
+$letterCy   = 690; // centre vertical de la lettre, sous les ondes
+$bbox       = imagettfbbox($fontSize, 0, $font, 'B');
+// Centrage exact à partir de la boîte englobante réelle du glyphe.
+$textX = (int) round($cx - ($bbox[2] + $bbox[0]) / 2);
+$textY = (int) round($letterCy - ($bbox[5] + $bbox[1]) / 2);
+imagettftext($img, $fontSize, 0, $textX, $textY, $white, $font, 'B');
 
 $outDir = __DIR__;
 foreach (SIZES as $size) {
