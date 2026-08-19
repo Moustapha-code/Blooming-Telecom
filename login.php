@@ -16,22 +16,58 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require 'config/database.php';
+    require 'config/login_throttle.php';
 
     $username = sanitize($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
+    $ip       = clientIp();
 
-    if ($username && $password) {
+    pruneLoginAttempts($pdo);
+    $lockedFor = loginLockoutRemaining($pdo, $ip, $username);
+
+    if ($lockedFor > 0) {
+        $error = 'Trop de tentatives échouées. Réessayez dans '
+               . formatLockoutDelay($lockedFor) . '.';
+    } elseif ($username && $password) {
         $stmt = $pdo->prepare('SELECT id, password FROM admin_users WHERE username = ?');
         $stmt->execute([$username]);
         $admin = $stmt->fetch();
 
         if ($admin && password_verify($password, $admin['password'])) {
+            clearLoginAttempts($pdo, $ip, $username);
+
+            // Contre la fixation de session : l'identifiant de session
+            // fourni avant authentification ne doit pas rester valide.
+            session_regenerate_id(true);
+
             $_SESSION['admin_id'] = $admin['id'];
             $_SESSION['admin_username'] = $username;
-            header('Location: index.php');
+            header('Location: ' . BASE_URL . '/index.php');
             exit;
-        } else {
-            $error = 'Identifiant ou mot de passe incorrect.';
+        }
+
+        // Compte inexistant : on vérifie quand même un condensat factice.
+        // Sans cela, la réponse est nettement plus rapide et permet de
+        // deviner quels identifiants existent.
+        if (!$admin) {
+            password_verify($password, '$2y$10$usesomesillystringforsalt0123456789abcdefghijklmnopqrstuv');
+        }
+
+        recordFailedLogin($pdo, $ip, $username);
+        usleep(LOGIN_FAILURE_DELAY_US);
+
+        $remaining = LOGIN_MAX_PER_ACCOUNT
+                   - (int) $pdo->query(
+                        'SELECT COUNT(*) FROM login_attempts
+                          WHERE ip = ' . $pdo->quote($ip) . '
+                            AND username = ' . $pdo->quote($username) . '
+                            AND attempted_at > ' . $pdo->quote(date('Y-m-d H:i:s', time() - LOGIN_WINDOW_SECONDS))
+                     )->fetchColumn();
+
+        $error = 'Identifiant ou mot de passe incorrect.';
+        if ($remaining > 0 && $remaining <= 2) {
+            $error .= ' Encore ' . $remaining . ' tentative' . ($remaining > 1 ? 's' : '')
+                    . ' avant blocage temporaire.';
         }
     } else {
         $error = 'Veuillez remplir tous les champs.';

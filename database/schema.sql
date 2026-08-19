@@ -224,3 +224,14 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- Tentatives de connexion échouées (verrouillage anti-force brute).
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+    `id`           INT(11)      NOT NULL AUTO_INCREMENT,
+    `ip`           VARCHAR(45)  NOT NULL,
+    `username`     VARCHAR(100) NOT NULL,
+    `attempted_at` DATETIME     NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_ip_time` (`ip`, `attempted_at`),
+    KEY `idx_user_time` (`username`, `attempted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
