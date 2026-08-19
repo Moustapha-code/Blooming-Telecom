@@ -309,5 +309,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             &copy; <?php echo date('Y'); ?> Blooming Telecom &bull; FTTH Dashboard
         </div>
     </div>
+
+    <?php require_once __DIR__ . '/components/page_loader.php'; renderPageLoader(); ?>
+    <script>
+        // La vérification du mot de passe est volontairement lente (bcrypt,
+        // plus la pénalité anti-force brute) : sans retour visuel, le bouton
+        // paraît sans effet et l'utilisateur reclique.
+        document.querySelector('form[method="POST"]').addEventListener('submit', function () {
+            const btn = this.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = '.75';
+                btn.style.cursor = 'wait';
+                btn.innerHTML = 'Connexion en cours...';
+            }
+            if (window.showPageLoader) window.showPageLoader('Vérification...');
+        });
+    </script>
 </body>
 </html>

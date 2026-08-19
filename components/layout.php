@@ -233,6 +233,13 @@ function renderLayoutScripts() {
                     const term = searchInput.value.trim();
                     if (term === serverInput.value.trim()) return; // rien de neuf
                     serverInput.value = term;
+                    // form.submit() ne déclenche pas l'événement 'submit' :
+                    // l'indicateur doit être affiché explicitement.
+                    if (window.showPageLoader) {
+                        window.showPageLoader(term === ''
+                            ? 'Chargement...'
+                            : 'Recherche de « ' + term + ' »...');
+                    }
                     serverForm.submit(); // repart de la première page
                 };
 
@@ -273,5 +280,7 @@ function renderLayoutScripts() {
     </script>
     <script src="<?php echo (strpos($_SERVER['SCRIPT_NAME'], '/pages/') !== false) ? '../' : ''; ?>assets/js/main.js"></script>
     <?php
+    require_once __DIR__ . '/page_loader.php';
+    renderPageLoader();
 }
 ?>
