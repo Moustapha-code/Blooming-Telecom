@@ -101,6 +101,25 @@ $byNature = $aggregate(
     "GROUP BY i.nature_ot HAVING i.nature_ot IS NOT NULL AND i.nature_ot <> '' ORDER BY total DESC"
 );
 
+// Le détail nature par nature écrase la lecture : DRG domine et les
+// autres codes se réduisent à des barres d'une unité. On oppose donc le
+// DRG au groupe Installations, en gardant « Autres » pour le reliquat
+// afin que le total reste celui de la période.
+$installNatures = array_map('strtoupper', natureGroups()['grp_installations']['natures']);
+$natureBuckets  = ['DRG' => 0, 'Installations' => 0, 'Autres' => 0];
+foreach ($byNature as $row) {
+    $code  = strtoupper(trim((string) $row['nature_ot']));
+    $count = (int) $row['total'];
+    if ($code === 'DRG') {
+        $natureBuckets['DRG'] += $count;
+    } elseif (in_array($code, $installNatures, true)) {
+        $natureBuckets['Installations'] += $count;
+    } else {
+        $natureBuckets['Autres'] += $count;
+    }
+}
+$natureBuckets = array_filter($natureBuckets, fn($v) => $v > 0);
+
 $byZoneChart = $aggregate(
     'i.zone, COUNT(*) AS total',
     'GROUP BY i.zone ORDER BY total DESC'
@@ -128,7 +147,7 @@ foreach ($byEtat as $row) {
 $dashboardCharts = [
     'byDate'   => $byDate,
     'byEtat'   => $etatChartData,
-    'byNature' => $byNature,
+    'byNature' => $natureBuckets,
     'byZone'   => $byZoneChart,
     'byTech'   => $byTech,
     'byScan'   => $byScan,
@@ -295,7 +314,7 @@ if ($dateFrom !== '' && $dateTo !== '') {
                                 </div>
                             </div>
                             <div class="card">
-                                <h3 class="section-title">OT par Nature</h3>
+                                <h3 class="section-title">DRG / Installations</h3>
                                 <div style="height: 300px; position: relative;">
                                     <canvas id="dashByNature"></canvas>
                                 </div>
@@ -493,14 +512,22 @@ if ($dateFrom !== '' && $dateTo !== '') {
             options: { responsive: true, maintainAspectRatio: false, plugins: legendBottom, cutout: '65%' }
         });
 
-        // 3) OT par nature
+        // 3) DRG contre le groupe Installations
+        const natureKeys = Object.keys(data.byNature);
+        const NATURE_COLORS = {
+            'DRG':           'rgba(239, 68, 68, .8)',   // dérangements
+            'Installations': 'rgba(59, 130, 246, .8)',
+            'Autres':        'rgba(148, 163, 184, .8)',
+        };
         make('dashByNature', {
             type: 'bar',
             data: {
-                labels: data.byNature.map(r => r.nature_ot),
+                labels: natureKeys,
                 datasets: [{
-                    label: 'OT', data: data.byNature.map(r => Number(r.total)),
-                    backgroundColor: 'rgba(59,130,246,.8)', borderRadius: 6
+                    label: 'OT',
+                    data: natureKeys.map(k => Number(data.byNature[k])),
+                    backgroundColor: natureKeys.map(k => NATURE_COLORS[k] || 'rgba(148,163,184,.8)'),
+                    borderRadius: 6
                 }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: noLegend, scales: gridOpts }
