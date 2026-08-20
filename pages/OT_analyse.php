@@ -18,6 +18,19 @@ $zoneFilter = $_GET['zone'] ?? '';
 $techFilter = $_GET['technician_id'] ?? '';
 $natureFilter = $_GET['nature_ot'] ?? '';
 
+// ---- ÉTATS DISPONIBLES ----
+// Les variantes d'écriture d'un même état (« encoure », « en cous »…)
+// sont regroupées sur leur forme canonique : sinon le filtre affiche deux
+// entrées « En cours » et n'en sélectionne qu'une.
+$etatOptions  = []; // valeur canonique => libellé affiché
+$etatVariants = []; // valeur canonique => orthographes réellement en base
+foreach ($pdo->query("SELECT DISTINCT etat FROM installations WHERE etat IS NOT NULL AND etat <> ''") as $row) {
+    $canonical = normalizeEtat($row['etat']);
+    $etatOptions[$canonical]  = getStatusBadgeText($canonical);
+    $etatVariants[$canonical][] = $row['etat'];
+}
+asort($etatOptions);
+
 // Build WHERE / params (with alias i.)
 $where = [];
 $params = [];
@@ -31,8 +44,16 @@ if ($endDate !== '') {
     $params[':end_date'] = $endDate;
 }
 if ($etatFilter !== '') {
-    $where[] = "i.etat = :etat";
-    $params[':etat'] = $etatFilter;
+    // Le filtre porte sur la valeur canonique : il faut retrouver toutes
+    // les orthographes correspondantes, sans quoi les lignes mal
+    // orthographiées disparaissent du résultat.
+    $variants = $etatVariants[$etatFilter] ?? [$etatFilter];
+    $placeholders = [];
+    foreach (array_values($variants) as $i => $variant) {
+        $placeholders[] = ":etat$i";
+        $params[":etat$i"] = $variant;
+    }
+    $where[] = 'i.etat IN (' . implode(', ', $placeholders) . ')';
 }
 if ($zoneFilter !== '') {
     $where[] = "i.zone = :zone";
@@ -50,7 +71,6 @@ if ($natureFilter !== '') {
 $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
 // ---- DISTINCT VALUES FOR FILTERS ----
-$distinctEtats = $pdo->query("SELECT DISTINCT etat FROM installations ORDER BY etat")->fetchAll();
 $distinctZones = $pdo->query("SELECT DISTINCT zone FROM installations ORDER BY zone")->fetchAll();
 
 // technicians list (id + name) only from OT that exist
@@ -309,9 +329,9 @@ $chartData = [
                             <label>État</label>
                             <select name="etat">
                                 <option value="">Tous les états</option>
-                                <?php foreach ($distinctEtats as $row): ?>
-                                    <option value="<?php echo htmlspecialchars($row['etat']); ?>" <?php echo $row['etat'] === $etatFilter ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($row['etat']); ?>
+                                <?php foreach ($etatOptions as $value => $label): ?>
+                                    <option value="<?php echo htmlspecialchars($value); ?>" <?php echo $value === $etatFilter ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($label); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>

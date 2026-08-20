@@ -54,15 +54,31 @@ function normalizeEtat(?string $raw): string
     ]);
     $v = preg_replace('/[\s_-]+/', ' ', $v);
 
-    $map = [
-        'encoure' => 'encoure', 'en cours' => 'encoure', 'encours' => 'encoure',
-        'en cour' => 'encoure', 'cours' => 'encoure',
-        'realise' => 'realise', 'realiser' => 'realise', 'realisee' => 'realise',
-        'fait' => 'realise', 'termine' => 'realise',
-        'retard' => 'retard', 'en retard' => 'retard', 'late' => 'retard',
-        'negative' => 'negative', 'negatif' => 'negative', 'negative ot' => 'negative',
+    // Reconnaissance par motif plutôt que par liste exacte : une table de
+    // correspondance laisse passer la moindre faute de frappe. « en cous »
+    // est ainsi arrivé en base par un import CSV et s'affichait comme un
+    // second « En cours » dans les filtres.
+    $patterns = [
+        '/^en\s*retard/'  => 'retard',   // avant le motif « en cou… »
+        '/^retard/'       => 'retard',
+        '/^late/'         => 'retard',
+        '/^en\s*cou/'     => 'encoure',  // en cours, en cour, en cous, encours…
+        '/^encou/'        => 'encoure',
+        '/^cours?$/'      => 'encoure',
+        '/^real/'         => 'realise',  // realise, realiser, realisee…
+        '/^fait/'         => 'realise',
+        '/^termin/'       => 'realise',
+        '/^neg/'          => 'negative', // negatif, negative…
     ];
-    return $map[$v] ?? $v;
+    foreach ($patterns as $pattern => $canonical) {
+        if (preg_match($pattern, $v)) {
+            return $canonical;
+        }
+    }
+
+    // Valeur inconnue : on la conserve telle quelle plutôt que de la
+    // ranger de force dans une catégorie fausse.
+    return $v;
 }
 
 /**
