@@ -60,16 +60,29 @@ $pendingOTs = $countOTs("etat IN ('encoure', 'en cours')");
 // 5. Stock Alerts (état courant, hors période)
 $lowStock = $pdo->query("SELECT COUNT(*) FROM materials WHERE stock_quantity < 10")->fetchColumn();
 
-// 6. Derniers OT de la période
+// 6. OT encore en cours sur la période.
+// Ce tableau sert à savoir ce qui reste à traiter : les OT terminés n'y
+// ont pas leur place. Les deux orthographes du même état coexistent en
+// base (voir normalizeEtat).
+$encoursClauses = array_map(fn($c) => "i.$c", $periodWhere);
+$encoursClauses[] = "i.etat IN ('encoure', 'en cours')";
+
 $stmt = $pdo->prepare("
     SELECT i.*, t.name as technician_name
     FROM installations i
     LEFT JOIN technicians t ON i.technician_id = t.technician_id
-    " . ($periodWhere ? 'WHERE ' . implode(' AND ', array_map(fn($c) => "i.$c", $periodWhere)) : '') . "
-    ORDER BY i.date_intervention DESC, i.id DESC LIMIT 5
+    WHERE " . implode(' AND ', $encoursClauses) . "
+    ORDER BY i.date_intervention DESC, i.temp_de_venir DESC, i.id DESC
+    LIMIT 51
 ");
 $stmt->execute($periodParams);
 $recentOTs = $stmt->fetchAll();
+
+// La 51e ligne sert uniquement à détecter qu'il y en a davantage.
+$encoursTruncated = count($recentOTs) > 50;
+if ($encoursTruncated) {
+    array_pop($recentOTs);
+}
 
 // 7. OT Stats for Chart (Simple summary by zone)
 $stmt = $pdo->prepare("SELECT zone, COUNT(*) as count FROM installations $periodSql GROUP BY zone");
@@ -338,8 +351,13 @@ if ($dateFrom !== '' && $dateTo !== '') {
                 <!-- 4. Bottom Section: Recent Activities (Table stays as requested) -->
                 <div class="card-table">
                     <div class="card-header flex justify-between items-center">
-                        <h3 class="section-title mb-0">Dernières Installations (OT)</h3>
-                        <a href="pages/installations.php" class="text-sm font-bold text-primary">Voir toutes les
+                        <h3 class="section-title mb-0">
+                            OT En Cours
+                            <span class="badge badge-warning" style="margin-left: 8px; font-size: .75rem;">
+                                <?php echo count($recentOTs) . ($encoursTruncated ? '+' : ''); ?>
+                            </span>
+                        </h3>
+                        <a href="pages/installations.php?etat=encoure" class="text-sm font-bold text-primary">Voir toutes les
                             installations <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                     <div class="table-responsive">
@@ -357,6 +375,14 @@ if ($dateFrom !== '' && $dateTo !== '') {
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php if (empty($recentOTs)): ?>
+                                    <tr>
+                                        <td colspan="8" class="text-center p-6 text-muted">
+                                            <i class="fa-solid fa-circle-check text-success mr-2"></i>
+                                            Aucun OT en cours sur cette période.
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                                 <?php foreach ($recentOTs as $ot): ?>
                                     <tr class="table-row">
                                         <td class="font-bold text-muted">#<?php echo htmlspecialchars($ot['id']); ?></td>
@@ -391,6 +417,14 @@ if ($dateFrom !== '' && $dateTo !== '') {
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+                                <?php if ($encoursTruncated): ?>
+                                    <tr>
+                                        <td colspan="8" class="text-center p-4 text-muted text-sm">
+                                            Seuls les 50 premiers sont affichés &mdash;
+                                            <a href="pages/installations.php?etat=encoure" class="text-primary font-bold">voir la liste complète</a>
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
