@@ -30,6 +30,12 @@ function renderSidebar($currentPage) {
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="<?php echo BASE_URL; ?>/pages/OT_import.php" class="nav-link <?php echo $currentPage == 'OT_import.php' ? 'active' : ''; ?>">
+                        <i class="fa-solid fa-file-import"></i>
+                        <span>Import OT (CSV)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="<?php echo BASE_URL; ?>/pages/OT_export.php" class="nav-link <?php echo $currentPage == 'OT_export.php' ? 'active' : ''; ?>">
                         <i class="fa-solid fa-file-excel"></i>
                         <span>Export Excel OT</span>

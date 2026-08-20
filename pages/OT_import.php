@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 
 <body>
     <div class="app-container">
-        <?php renderSidebar('installations.php'); ?>
+        <?php renderSidebar('OT_import.php'); ?>
 
         <main class="main-content">
             <?php renderTopbar($_SESSION['admin_username']); ?>
