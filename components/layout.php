@@ -143,8 +143,28 @@ function renderTopbar($username) {
                     <span class="role">Administrateur</span>
                 </div>
             </div>
+
+            <!-- Déconnexion : la barre supérieure est l'endroit où on la
+                 cherche, à côté du compte connecté. Le lien du menu latéral
+                 reste en place. -->
+            <a href="<?php echo BASE_URL; ?>/api/logout.php"
+               class="icon-btn"
+               id="logoutBtn"
+               title="Se déconnecter"
+               aria-label="Se déconnecter"
+               style="color: var(--danger);">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
         </div>
     </header>
+    <script>
+        // Une déconnexion involontaire fait perdre la saisie en cours.
+        document.getElementById('logoutBtn')?.addEventListener('click', function (event) {
+            if (!confirm('Voulez-vous vraiment vous déconnecter ?')) {
+                event.preventDefault();
+            }
+        });
+    </script>
     <?php
 }
 
