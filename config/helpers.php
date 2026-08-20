@@ -92,8 +92,8 @@ function normalizeEtat(?string $raw): string
 function natureGroups(): array
 {
     return [
-        'grp_raccordement' => [
-            'label'   => 'CPL, TRL, CMI, CLS, CST, RLR',
+        'grp_installations' => [
+            'label'   => 'Installations',
             'natures' => ['CPL', 'TRL', 'CMI', 'CLS', 'CST', 'RLR'],
         ],
     ];
