@@ -10,35 +10,71 @@ require 'components/layout.php';
 
 requireLogin();
 
+// --- Période affichée ---
+// Sans paramètre dans l'URL, le tableau de bord s'ouvre sur les 3
+// derniers jours. Les compteurs liés aux OT suivent cette période ;
+// l'effectif et le stock, eux, décrivent un état courant et restent
+// globaux.
+[$dateFrom, $dateTo] = resolveDateRange('date_from', 'date_to');
+
+$periodWhere  = [];
+$periodParams = [];
+if ($dateFrom !== '') {
+    $periodWhere[]  = 'date_intervention >= ?';
+    $periodParams[] = $dateFrom;
+}
+if ($dateTo !== '') {
+    $periodWhere[]  = 'date_intervention <= ?';
+    $periodParams[] = $dateTo;
+}
+$periodSql = $periodWhere ? 'WHERE ' . implode(' AND ', $periodWhere) : '';
+
+/** Compte les OT de la période, avec une condition supplémentaire éventuelle. */
+$countOTs = function (?string $extra = null) use ($pdo, $periodWhere, $periodParams): int {
+    $clauses = $periodWhere;
+    if ($extra !== null) {
+        $clauses[] = $extra;
+    }
+    $sql = 'SELECT COUNT(*) FROM installations'
+         . ($clauses ? ' WHERE ' . implode(' AND ', $clauses) : '');
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($periodParams);
+    return (int) $stmt->fetchColumn();
+};
+
 // --- KPI Queries ---
 
-// 1. Technicians Count
+// 1. Technicians Count (effectif courant, hors période)
 $techCount = $pdo->query("SELECT COUNT(*) FROM technicians")->fetchColumn();
 
-// 2. Total OTs
-$totalOTs = $pdo->query("SELECT COUNT(*) FROM installations")->fetchColumn();
+// 2. OT de la période
+$totalOTs = $countOTs();
 
-// 3. Realized Today
-$realizedToday = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat = 'realise' AND date_realise = CURDATE()")->fetchColumn();
+// 3. Réalisés sur la période
+$realizedToday = $countOTs("etat = 'realise'");
 
 // 4. Pending / In Progress
 // Deux orthographes du même état coexistent en base ('encoure', 'en cours')
-$pendingOTs = $pdo->query("SELECT COUNT(*) FROM installations WHERE etat IN ('encoure', 'en cours')")->fetchColumn();
+$pendingOTs = $countOTs("etat IN ('encoure', 'en cours')");
 
-// 5. Stock Alerts
+// 5. Stock Alerts (état courant, hors période)
 $lowStock = $pdo->query("SELECT COUNT(*) FROM materials WHERE stock_quantity < 10")->fetchColumn();
 
-// 6. Recent OTs (Last 5)
-$stmt = $pdo->query("
-    SELECT i.*, t.name as technician_name 
-    FROM installations i 
+// 6. Derniers OT de la période
+$stmt = $pdo->prepare("
+    SELECT i.*, t.name as technician_name
+    FROM installations i
     LEFT JOIN technicians t ON i.technician_id = t.technician_id
-    ORDER BY i.id DESC LIMIT 5
+    " . ($periodWhere ? 'WHERE ' . implode(' AND ', array_map(fn($c) => "i.$c", $periodWhere)) : '') . "
+    ORDER BY i.date_intervention DESC, i.id DESC LIMIT 5
 ");
+$stmt->execute($periodParams);
 $recentOTs = $stmt->fetchAll();
 
 // 7. OT Stats for Chart (Simple summary by zone)
-$statsByZone = $pdo->query("SELECT zone, COUNT(*) as count FROM installations GROUP BY zone")->fetchAll(PDO::FETCH_KEY_PAIR);
+$stmt = $pdo->prepare("SELECT zone, COUNT(*) as count FROM installations $periodSql GROUP BY zone");
+$stmt->execute($periodParams);
+$statsByZone = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -66,13 +102,42 @@ $statsByZone = $pdo->query("SELECT zone, COUNT(*) as count FROM installations GR
                     <div>
                         <h2 class="page-title">Bonjour, <?php echo htmlspecialchars($_SESSION['admin_username']); ?> 👋
                         </h2>
-                        <p class="page-subtitle">Voici un aperçu de l'activité de Blooming FTTH aujourd'hui.</p>
+                        <p class="page-subtitle">Voici un aperçu de l'activité de Blooming Telecom.</p>
                     </div>
                     <div class="flex gap-4">
                         <a href="pages/installations.php" class="btn btn-primary">
                             <i class="fa-solid fa-plus"></i> Nouvel OT
                         </a>
                     </div>
+                </div>
+
+                <!-- Période : 3 derniers jours par défaut -->
+                <div class="card mb-6" style="padding: 16px 20px;">
+                    <form method="GET" class="flex items-end gap-4 flex-wrap">
+                        <div class="form-group mb-0">
+                            <label>Date Début</label>
+                            <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>">
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Date Fin</label>
+                            <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-filter"></i> Appliquer
+                        </button>
+                        <a href="?date_from=&date_to=" class="btn btn-secondary">
+                            <i class="fa-solid fa-infinity"></i> Tout l'historique
+                        </a>
+                        <span class="text-xs text-muted" style="margin-left: auto;">
+                            <?php if ($dateFrom !== '' || $dateTo !== ''): ?>
+                                Du <strong><?php echo htmlspecialchars($dateFrom !== '' ? formatDate($dateFrom) : '—'); ?></strong>
+                                au <strong><?php echo htmlspecialchars($dateTo !== '' ? formatDate($dateTo) : '—'); ?></strong>
+                            <?php else: ?>
+                                <strong>Tout l'historique</strong>
+                            <?php endif; ?>
+                            &bull; <strong><?php echo $totalOTs; ?></strong> OT
+                        </span>
+                    </form>
                 </div>
 
                 <!-- 2. KPI Section (Clean 4-column grid) -->
@@ -92,9 +157,9 @@ $statsByZone = $pdo->query("SELECT zone, COUNT(*) as count FROM installations GR
                             <div class="kpi-icon green">
                                 <i class="fa-solid fa-check-double"></i>
                             </div>
-                            <span class="badge badge-info">Aujourd'hui</span>
+                            <span class="badge badge-info">Période</span>
                         </div>
-                        <div class="kpi-label">Réalisés (24h)</div>
+                        <div class="kpi-label">Réalisés</div>
                         <div class="kpi-value"><?php echo $realizedToday; ?></div>
                     </div>
 

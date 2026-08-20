@@ -81,6 +81,35 @@ function normalizeEtat(?string $raw): string
     return $v;
 }
 
+/** Nombre de jours affichés par défaut, aujourd'hui compris. */
+const DEFAULT_PERIOD_DAYS = 3;
+
+/**
+ * Bornes de dates d'un écran filtrable.
+ *
+ * À l'ouverture d'une page, sans paramètre dans l'URL, on retient les
+ * trois derniers jours plutôt que l'historique complet. Dès que le
+ * formulaire est envoyé, les valeurs reçues font foi — y compris vides,
+ * ce qui permet de vider les dates pour tout afficher.
+ *
+ * @return array{0:string,1:string} [date de début, date de fin]
+ */
+function resolveDateRange(string $fromKey, string $toKey, int $days = DEFAULT_PERIOD_DAYS): array
+{
+    $submitted = array_key_exists($fromKey, $_GET) || array_key_exists($toKey, $_GET);
+    if ($submitted) {
+        return [
+            trim((string) ($_GET[$fromKey] ?? '')),
+            trim((string) ($_GET[$toKey] ?? '')),
+        ];
+    }
+
+    return [
+        date('Y-m-d', strtotime('-' . max($days - 1, 0) . ' days')),
+        date('Y-m-d'),
+    ];
+}
+
 /**
  * Regroupements de natures d'OT proposés dans les filtres, en plus des
  * natures individuelles. Sélectionner un groupe retourne toutes ses

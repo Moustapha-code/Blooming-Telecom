@@ -35,14 +35,17 @@ if (!empty($_GET['etat'])) {
     }
 }
 
-if (!empty($_GET['date_from'])) {
+// Sans paramètre dans l'URL, la page s'ouvre sur les 3 derniers jours.
+[$dateFrom, $dateTo] = resolveDateRange('date_from', 'date_to');
+
+if ($dateFrom !== '') {
     $where[]  = 'i.date_intervention >= ?';
-    $params[] = $_GET['date_from'];
+    $params[] = $dateFrom;
 }
 
-if (!empty($_GET['date_to'])) {
+if ($dateTo !== '') {
     $where[]  = 'i.date_intervention <= ?';
-    $params[] = $_GET['date_to'];
+    $params[] = $dateTo;
 }
 
 if (!empty($_GET['zone'])) {
@@ -170,11 +173,11 @@ function buildPageUrl($pageNumber): string {
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 items-end">
                         <div class="form-group mb-0">
                             <label>Date Début</label>
-                            <input type="date" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? ''); ?>">
+                            <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>">
                         </div>
                         <div class="form-group mb-0">
                             <label>Date Fin</label>
-                            <input type="date" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? ''); ?>">
+                            <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>">
                         </div>
                         <div class="form-group mb-0">
                             <label>Statut</label>

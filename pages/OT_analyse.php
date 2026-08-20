@@ -11,8 +11,8 @@ require '../components/layout.php';
 requireLogin();
 
 // Read filters from GET
-$startDate = $_GET['start_date'] ?? '';
-$endDate = $_GET['end_date'] ?? '';
+// Sans paramètre dans l'URL, la page s'ouvre sur les 3 derniers jours.
+[$startDate, $endDate] = resolveDateRange('start_date', 'end_date');
 $etatFilter = $_GET['etat'] ?? '';
 $zoneFilter = $_GET['zone'] ?? '';
 $techFilter = $_GET['technician_id'] ?? '';
