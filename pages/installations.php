@@ -418,23 +418,12 @@ function buildPageUrl($pageNumber): string {
 
                     <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
-                            <label>Nom du Client</label>
-                            <input type="text" id="installNom" name="nom" placeholder="Nom Complet">
-                        </div>
-                        <div class="form-group">
                             <label>Numéro Client</label>
                             <input type="text" id="installNumero" name="numero_client" placeholder="ID Client">
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
                         <div class="form-group">
                             <label>Date Intervention</label>
                             <input type="date" id="installDate" name="date_intervention" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Date Réalisation</label>
-                            <input type="date" id="installDateRealise" name="date_realise">
                         </div>
                     </div>
 
@@ -444,8 +433,8 @@ function buildPageUrl($pageNumber): string {
                             <input type="text" id="installZone" name="zone" required>
                         </div>
                         <div class="form-group">
-                            <label>Port</label>
-                            <input type="text" id="installPort" name="port">
+                            <label>Heure de venir</label>
+                            <input type="time" id="installTemp" name="temp_de_venir">
                         </div>
                         <div class="form-group">
                             <label>GEPON</label>
@@ -600,11 +589,10 @@ function buildPageUrl($pageNumber): string {
 
         function editInstall(inst) {
             document.getElementById('installId').value       = inst.id || '';
-            document.getElementById('installNom').value      = inst.nom || '';
             document.getElementById('installNumero').value   = inst.numero_client || '';
             document.getElementById('installDate').value     = inst.date_intervention || '';
-            document.getElementById('installDateRealise').value = inst.date_realise || '';
-            document.getElementById('installPort').value     = inst.port || '';
+            // Colonne TIME : l'input n'accepte que HH:MM.
+            document.getElementById('installTemp').value     = (inst.temp_de_venir || '').slice(0, 5);
             document.getElementById('installZone').value     = inst.zone || '';
             document.getElementById('installGepon').value    = inst.Gepon || '';
             document.getElementById('installScan').value     = inst.scan || '';

@@ -9,16 +9,17 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
 try {
+    // nom et port ne sont plus saisis dans le formulaire : ils restent NULL
+    // à la création et peuvent toujours arriver par l'import CSV.
     $stmt = $pdo->prepare('
-        INSERT INTO installations (date_intervention, nom, numero_client, port, zone, Gepon, scan, etat, nature_ot, technician_id, commentaire) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO installations (date_intervention, temp_de_venir, numero_client, zone, Gepon, scan, etat, nature_ot, technician_id, commentaire)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ');
-    
+
     $stmt->execute([
         $data['date_intervention'] ?: date('Y-m-d'),
-        $data['nom'],
+        $data['temp_de_venir'] ?: null,
         intOrNull($data['numero_client'] ?? null),
-        intOrNull($data['port'] ?? null),
         $data['zone'] ?: '',
         $data['Gepon'] ?: '',
         $data['scan'] ?: NULL,

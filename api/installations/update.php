@@ -20,12 +20,14 @@ try {
         ? computeClotureStamp($current['etat'], $newEtat, $current['date_realise'], $current['temp_de_realise'])
         : null;
 
-    $sql = 'UPDATE installations SET date_intervention = ?, nom = ?, numero_client = ?, port = ?, zone = ?, Gepon = ?, scan = ?, etat = ?, nature_ot = ?, technician_id = ?, commentaire_temp_de_realise = ?, commentaire = ?';
+    // nom et port ne figurent plus dans le formulaire : les inclure ici les
+    // écraserait avec une valeur vide à chaque enregistrement. Les colonnes
+    // existent toujours et gardent leur contenu.
+    $sql = 'UPDATE installations SET date_intervention = ?, temp_de_venir = ?, numero_client = ?, zone = ?, Gepon = ?, scan = ?, etat = ?, nature_ot = ?, technician_id = ?, commentaire_temp_de_realise = ?, commentaire = ?';
     $params = [
         $data['date_intervention'] ?: date('Y-m-d'),
-        $data['nom'],
+        $data['temp_de_venir'] ?: null,
         intOrNull($data['numero_client'] ?? null),
-        intOrNull($data['port'] ?? null),
         $data['zone'] ?: '',
         $data['Gepon'] ?: '',
         $data['scan'] ?: NULL,
