@@ -154,6 +154,7 @@ if ($dateFrom !== '' && $dateTo !== '') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/modern-dashboard.css?v=<?php echo filemtime('assets/css/modern-dashboard.css'); ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/chart-labels.js?v=<?php echo filemtime(__DIR__ . '/assets/js/chart-labels.js'); ?>"></script>
     <?php require_once __DIR__ . '/components/pwa.php'; renderPwaHead(); ?>
 </head>
 
