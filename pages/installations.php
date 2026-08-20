@@ -51,8 +51,13 @@ if (!empty($_GET['zone'])) {
 }
 
 if (!empty($_GET['nature_ot'])) {
-    $where[]  = 'i.nature_ot = ?';
-    $params[] = $_GET['nature_ot'];
+    // La valeur peut désigner un groupe de natures (voir natureGroups()).
+    $natureValues = resolveNatureFilter($_GET['nature_ot']);
+    $placeholders = implode(', ', array_fill(0, count($natureValues), '?'));
+    $where[] = "UPPER(i.nature_ot) IN ($placeholders)";
+    foreach ($natureValues as $value) {
+        $params[] = strtoupper($value);
+    }
 }
 
 if (!empty($_GET['scan'])) {
@@ -196,11 +201,20 @@ function buildPageUrl($pageNumber): string {
                             <label>Nature OT</label>
                             <select name="nature_ot">
                                 <option value="">Toutes les natures</option>
-                                <?php foreach ($natures as $n): ?>
-                                    <option value="<?php echo htmlspecialchars($n['nature_ot']); ?>" <?php echo ($_GET['nature_ot'] ?? '') === $n['nature_ot'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($n['nature_ot']); ?>
-                                    </option>
-                                <?php endforeach; ?>
+                                <optgroup label="Groupes">
+                                    <?php foreach (natureGroups() as $key => $group): ?>
+                                        <option value="<?php echo htmlspecialchars($key); ?>" <?php echo ($_GET['nature_ot'] ?? '') === $key ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($group['label']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                                <optgroup label="Natures">
+                                    <?php foreach ($natures as $n): ?>
+                                        <option value="<?php echo htmlspecialchars($n['nature_ot']); ?>" <?php echo ($_GET['nature_ot'] ?? '') === $n['nature_ot'] ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($n['nature_ot']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
                             </select>
                         </div>
                         <div class="form-group mb-0">

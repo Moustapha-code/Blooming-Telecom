@@ -64,8 +64,14 @@ if ($techFilter !== '') {
     $params[':technician_id'] = $techFilter;
 }
 if ($natureFilter !== '') {
-    $where[] = "i.nature_ot = :nature_ot";
-    $params[':nature_ot'] = $natureFilter;
+    // La valeur peut désigner un groupe de natures (voir natureGroups()).
+    $natureValues = resolveNatureFilter($natureFilter);
+    $placeholders = [];
+    foreach (array_values($natureValues) as $i => $value) {
+        $placeholders[] = ":nature$i";
+        $params[":nature$i"] = strtoupper($value);
+    }
+    $where[] = 'UPPER(i.nature_ot) IN (' . implode(', ', $placeholders) . ')';
 }
 
 $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
@@ -351,11 +357,20 @@ $chartData = [
                             <label>Nature OT</label>
                             <select name="nature_ot">
                                 <option value="">Toutes</option>
-                                <?php foreach ($distinctNature as $row): ?>
-                                    <option value="<?php echo htmlspecialchars($row['nature_ot']); ?>" <?php echo $row['nature_ot'] === $natureFilter ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($row['nature_ot']); ?>
-                                    </option>
-                                <?php endforeach; ?>
+                                <optgroup label="Groupes">
+                                    <?php foreach (natureGroups() as $key => $group): ?>
+                                        <option value="<?php echo htmlspecialchars($key); ?>" <?php echo $key === $natureFilter ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($group['label']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                                <optgroup label="Natures">
+                                    <?php foreach ($distinctNature as $row): ?>
+                                        <option value="<?php echo htmlspecialchars($row['nature_ot']); ?>" <?php echo $row['nature_ot'] === $natureFilter ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($row['nature_ot']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </optgroup>
                             </select>
                         </div>
                         <div>

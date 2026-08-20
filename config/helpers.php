@@ -82,6 +82,34 @@ function normalizeEtat(?string $raw): string
 }
 
 /**
+ * Regroupements de natures d'OT proposés dans les filtres, en plus des
+ * natures individuelles. Sélectionner un groupe retourne toutes ses
+ * natures d'un coup.
+ *
+ * Pour ajouter ou modifier un groupe, il suffit d'éditer ce tableau : les
+ * pages Installations et Analyse OT le lisent toutes les deux.
+ */
+function natureGroups(): array
+{
+    return [
+        'grp_raccordement' => [
+            'label'   => 'CPL, TRL, CMI, CLS, CST, RLR',
+            'natures' => ['CPL', 'TRL', 'CMI', 'CLS', 'CST', 'RLR'],
+        ],
+    ];
+}
+
+/**
+ * Natures correspondant à une valeur de filtre : la liste du groupe si la
+ * valeur en désigne un, sinon la nature seule.
+ */
+function resolveNatureFilter(string $value): array
+{
+    $groups = natureGroups();
+    return isset($groups[$value]) ? $groups[$value]['natures'] : [$value];
+}
+
+/**
  * Valeur destinée à une colonne entière : '' devient NULL.
  *
  * MySQL/MariaDB en mode permissif convertit '' en 0 sans rien dire, mais
